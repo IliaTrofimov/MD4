@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="MD4_app.Controls.HistoryExpander"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MD4_app.Controls" 
+             mc:Ignorable="d" 
+             d:DesignHeight="450" 
+             d:DesignWidth="250">
+  <Grid Background="#FFF0F0F0">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="auto"/>
+      <ColumnDefinition Width="auto"/>
+    </Grid.ColumnDefinitions>
+
+    <ListBox Grid.Column="1" x:Name="list_history" Visibility="Collapsed" Width="250px">
+      <ListBoxItem Content="xxxx"/>
+      <ListBoxItem Content="xxxx"/>
+      <ListBoxItem Content="..."/>
+
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <StackPanel Orientation="Horizontal" Margin="5,2,5,3">
+            <Label Margin="0,0,5,0" Content="{Binding Path=HashHex}" FontFamily="Consolas"/>
+            <Label Margin="0,0,5,0" Content="{Binding Path=Value}" FontStyle="{Binding Path=FontStyle}"/>
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
+    <Label Grid.Column="0" Padding="5,0,5,2"  VerticalAlignment="Top" RenderTransformOrigin="1,1" HorizontalAlignment="Stretch">
+      <Label.LayoutTransform>
+        <TransformGroup>
+          <RotateTransform Angle="-90"/>
+        </TransformGroup>
+      </Label.LayoutTransform>
+      <Hyperlink Click="Expand_Click">История</Hyperlink>
+    </Label>
+  </Grid>
+</UserControl>
