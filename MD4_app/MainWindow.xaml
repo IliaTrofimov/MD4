@@ -4,9 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MD4_app" 
-        xmlns:controls="clr-namespace:MD4_app.Controls"
+        xmlns:viewmodels="clr-namespace:MD4_app.ViewModels" 
+        d:DataContext="{d:DesignInstance Type=viewmodels:HashGeneratorViewModel}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MD4" Height="400" Width="800">
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition/>
@@ -25,15 +26,96 @@
         <Separator/>
         <MenuItem Header="Очистить"/>
       </MenuItem>
+      <MenuItem Header="Скрыть историю" x:Name="menu_history" Click="ToggleHistory_Click"/>
       <MenuItem Header="О программе"/>
     </Menu>
 
-    <StackPanel  Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Background="#FFD3D632">
+    <Grid Grid.Row="1" Grid.Column="0" Margin="5,0,5,5">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition/>
+        <ColumnDefinition/>
+        <ColumnDefinition Width="auto"/>
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="auto"/>
+        <RowDefinition/>
+        <RowDefinition Height="auto"/>
+        <RowDefinition Height="auto"/>
+        <RowDefinition Height="auto"/>
+      </Grid.RowDefinitions>
+
+      <GroupBox Grid.Row="1" Grid.ColumnSpan="2">
+        <GroupBox.Header>
+          <TextBlock Grid.Row="0" Grid.Column="0" Padding="0">
+              Введите текст или <Hyperlink Click="SetFile_Click">выберите файл</Hyperlink>
+          </TextBlock>
+        </GroupBox.Header>
+        <TextBox Padding="0,3" BorderThickness="0" x:Name="textBox_input" 
+              IsEnabled="{Binding IsInputFieldEnabled, UpdateSourceTrigger=PropertyChanged}"
+              Text="{Binding Input}"
+              HorizontalContentAlignment="{Binding InputHorAligment}"
+              VerticalContentAlignment="{Binding InputVerAligment}"/>
+      </GroupBox>
       
-    </StackPanel>
+      <Grid Grid.Row="2" Grid.ColumnSpan="2">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="auto"/>
+          <ColumnDefinition/>
+          <ColumnDefinition Width="auto"/>
+          <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
 
-    <controls:HistoryExpander Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="1"/>
+        <Label Grid.Column="0" Content="Сравнить с:" Padding="5,2"/>
+        <TextBox Grid.Column="1" Padding="5,2" Text="{Binding CompareHashHex}"/>
+        <Button Grid.Column="2" Margin="35,0,5,0" Content="Вычислить" HorizontalAlignment="Right" IsEnabled="{Binding IsEnabled}" Click="Run_Click"/>
+        <TextBlock Grid.Column="3" Padding="5,2" FontWeight="Bold"
+              Text="{Binding HexHash, UpdateSourceTrigger=PropertyChanged}"/>
+      </Grid>
 
-    <ProgressBar Grid.Row="2" Grid.ColumnSpan="2" x:Name="progress_execution" Height="12px" IsIndeterminate="True"/>
+      <GroupBox Grid.Column="2" Grid.RowSpan="3" Header="История" Margin="8,0,0,0" MinWidth="240px" Padding="-4,0,-4,0" x:Name="groupBox_history">
+        <ListBox x:Name="list_history" BorderThickness="0" ItemsSource="{Binding HistoryItems}" Padding="-2,0,-2,0" SelectionMode="Extended">
+          <ListBox.ContextMenu>
+            <ContextMenu>
+              <MenuItem Header="Копировать хеш"/>
+              <MenuItem Header="Сравнить с выбранными"/>
+              <MenuItem Header="Вычислить"/>
+            </ContextMenu>
+          </ListBox.ContextMenu>
+          <ListBox.ItemTemplate >
+            <ItemContainerTemplate >
+              <Grid Margin="0" Width="240px" >
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="auto"/>
+                  <RowDefinition/>
+                  <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition/>
+                  <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <Label Grid.Column="1" Content="{Binding Label}" Padding="0" FontSize="6pt" Margin="-400,0,0,0" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Value}" Padding="0" TextWrapping="WrapWithOverflow" LineHeight="1px" Name="text_value"/>
+                <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding HashHex}" FontWeight="Bold" Foreground="{Binding FontColor}" FontFamily="Consolas" Padding="0"/>
+              </Grid>
+              <ItemContainerTemplate.Triggers>
+                <DataTrigger Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}}" Value="False">
+                  <Setter TargetName="text_value" Property="TextWrapping" Value="NoWrap" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}}" Value="True">
+                  <Setter TargetName="text_value" Property="TextWrapping" Value="Wrap" />
+                </DataTrigger>
+              </ItemContainerTemplate.Triggers>
+            </ItemContainerTemplate>
+          </ListBox.ItemTemplate>
+          
+        </ListBox>
+      </GroupBox>
+     
+        
+    </Grid>
+
+    <ProgressBar Grid.Row="2" Grid.ColumnSpan="2" Height="15px" x:Name="progress_execution"
+              IsIndeterminate="{Binding IsProgressing}"/>
   </Grid>
 </Window>
