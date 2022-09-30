@@ -8,7 +8,7 @@ namespace MD4_hash
 {
     public static class MD4Utility
     {
-        public static string? ToHex(byte[] b, bool upperCase = false)
+        public static string ToHex(byte[] b, bool upperCase = false)
         {
             if (!upperCase)
                 return BitConverter.ToString(b).Replace("-", "").ToLower();
