@@ -7,7 +7,8 @@
         xmlns:viewmodels="clr-namespace:MD4_app.ViewModels" 
         d:DataContext="{d:DesignInstance Type=viewmodels:HashGeneratorViewModel}"
         mc:Ignorable="d"
-        Title="MD4" Height="400" Width="800">
+        Title="MD4" 
+        Height="400" Width="800" MinWidth="500" MinHeight="300">
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition/>
@@ -20,7 +21,7 @@
     </Grid.RowDefinitions>
 
     <Menu Grid.Row="0" Grid.ColumnSpan="2">
-      <MenuItem Header="Файл" x:Name="menu_file">
+      <MenuItem Header="Файл" IsEnabled="{Binding IsEnabled}">
         <MenuItem Header="Открыть файл"/>
         <MenuItem Header="Сохранить"/>
         <Separator/>
@@ -33,7 +34,6 @@
     <Grid Grid.Row="1" Grid.Column="0" Margin="5,0,5,5">
       <Grid.ColumnDefinitions>
         <ColumnDefinition/>
-        <ColumnDefinition/>
         <ColumnDefinition Width="auto"/>
       </Grid.ColumnDefinitions>
       <Grid.RowDefinitions>
@@ -44,35 +44,45 @@
         <RowDefinition Height="auto"/>
       </Grid.RowDefinitions>
 
-      <GroupBox Grid.Row="1" Grid.ColumnSpan="2">
+      <GroupBox Grid.Row="1" BorderThickness="1,1,1,1" ClipToBounds="True" x:Name="groupBox_input"
+              MouseEnter="Input_OnFocus" MouseLeave="Input_LostFocus" >
         <GroupBox.Header>
-          <TextBlock Grid.Row="0" Grid.Column="0" Padding="0">
-              Введите текст или <Hyperlink Click="SetFile_Click">выберите файл</Hyperlink>
+          <TextBlock>
+            Введите текст или <Hyperlink Click="SetFile_Click">выберите файл</Hyperlink>
           </TextBlock>
         </GroupBox.Header>
-        <TextBox Padding="0,3" BorderThickness="0" x:Name="textBox_input" 
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+          </Grid.RowDefinitions>
+           <TextBox AcceptsReturn="True" Padding="0,0" VerticalScrollBarVisibility="Auto" BorderThickness="0" x:Name="textBox_input"
+              GotFocus="Input_OnFocus" LostFocus="Input_LostFocus" TextChanged="Input_Changed"
               IsEnabled="{Binding IsInputFieldEnabled, UpdateSourceTrigger=PropertyChanged}"
               Text="{Binding Input}"
               HorizontalContentAlignment="{Binding InputHorAligment}"
-              VerticalContentAlignment="{Binding InputVerAligment}"/>
+              VerticalContentAlignment="{Binding InputVerAligment}" HorizontalScrollBarVisibility="Auto"/>
+        </Grid>
+       
       </GroupBox>
-      
-      <Grid Grid.Row="2" Grid.ColumnSpan="2">
+
+      <Grid Grid.Row="2" Margin="0,5">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="auto"/>
           <ColumnDefinition/>
           <ColumnDefinition Width="auto"/>
-          <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-
-        <Label Grid.Column="0" Content="Сравнить с:" Padding="5,2"/>
-        <TextBox Grid.Column="1" Padding="5,2" Text="{Binding CompareHashHex}"/>
-        <Button Grid.Column="2" Margin="35,0,5,0" Content="Вычислить" HorizontalAlignment="Right" IsEnabled="{Binding IsEnabled}" Click="Run_Click"/>
-        <TextBlock Grid.Column="3" Padding="5,2" FontWeight="Bold"
+        <Button Grid.Column="0" Content="Вычислить" HorizontalAlignment="Right" IsEnabled="{Binding IsEnabled}" Click="Run_Click">
+          
+        </Button>
+        <TextBox Grid.Column="1" Padding="0,4,0,0" Margin="15,0,0,0" FontWeight="Bold" IsReadOnly="True" BorderThickness="0" FontFamily="Consolas"
               Text="{Binding HexHash, UpdateSourceTrigger=PropertyChanged}"/>
+        <Label Grid.Column="2" Padding="0" HorizontalAlignment="Right">
+          <Hyperlink Click="Clear_Click">очистить</Hyperlink>
+        </Label>
       </Grid>
 
-      <GroupBox Grid.Column="2" Grid.RowSpan="3" Header="История" Margin="8,0,0,0" MinWidth="240px" Padding="-4,0,-4,0" x:Name="groupBox_history">
+      <GroupBox Grid.Column="2" Grid.RowSpan="2" Header="История" Margin="8,0,0,0" MinWidth="240px" Padding="-4,0,-4,0" x:Name="groupBox_history">
         <ListBox x:Name="list_history" BorderThickness="0" ItemsSource="{Binding HistoryItems}" Padding="-2,0,-2,0" SelectionMode="Extended">
           <ListBox.ContextMenu>
             <ContextMenu>
@@ -87,35 +97,32 @@
                 <Grid.RowDefinitions>
                   <RowDefinition Height="auto"/>
                   <RowDefinition/>
-                  <RowDefinition/>
                 </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                  <ColumnDefinition/>
-                  <ColumnDefinition Width="auto"/>
-                </Grid.ColumnDefinitions>
-                
-                <Label Grid.Column="1" Content="{Binding Label}" Padding="0" FontSize="6pt" Margin="-400,0,0,0" HorizontalAlignment="Right"/>
-                <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Value}" Padding="0" TextWrapping="WrapWithOverflow" LineHeight="1px" Name="text_value"/>
-                <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding HashHex}" FontWeight="Bold" Foreground="{Binding FontColor}" FontFamily="Consolas" Padding="0"/>
+
+                <TextBlock Padding="0" Name="text_value" Text="{Binding Value}" FontStyle="{Binding FontStyle}"/>
+                <TextBlock Grid.Row="1" Text="{Binding HashHex}" FontWeight="Bold" FontFamily="Consolas" Padding="0"/>
+                <Label Grid.Row="1" Content="{Binding Label}" Padding="0" FontSize="6pt" HorizontalAlignment="Right" VerticalAlignment="Bottom" Foreground="#FF4B4B4B" />
               </Grid>
+
               <ItemContainerTemplate.Triggers>
                 <DataTrigger Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}}" Value="False">
-                  <Setter TargetName="text_value" Property="TextWrapping" Value="NoWrap" />
+                  <Setter TargetName="text_value" Property="TextWrapping" Value="NoWrap"/>
+                  <Setter TargetName="text_value" Property="TextTrimming" Value="CharacterEllipsis"/>
+                  <Setter TargetName="text_value" Property="MaxHeight" Value="13pt"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Path=IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}}" Value="True">
-                  <Setter TargetName="text_value" Property="TextWrapping" Value="Wrap" />
+                  <Setter TargetName="text_value" Property="TextWrapping" Value="Wrap"/>
+                  <Setter TargetName="text_value" Property="TextTrimming" Value="None"/>
+                  <Setter TargetName="text_value" Property="MaxHeight" Value="100000pt"/>
                 </DataTrigger>
               </ItemContainerTemplate.Triggers>
             </ItemContainerTemplate>
           </ListBox.ItemTemplate>
-          
         </ListBox>
       </GroupBox>
-     
-        
     </Grid>
 
-    <ProgressBar Grid.Row="2" Grid.ColumnSpan="2" Height="15px" x:Name="progress_execution"
+    <ProgressBar Grid.Row="2" Grid.ColumnSpan="2" Height="15px" Background="#FFF0F0F0" BorderThickness="0,1,0,0"
               IsIndeterminate="{Binding IsProgressing}"/>
   </Grid>
 </Window>
