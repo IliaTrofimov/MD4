@@ -23,6 +23,8 @@ namespace MD4_app
     /// </summary>
     public partial class MainWindow : Window
     {
+        private bool IsInputFocused = false;
+
         public HashGeneratorViewModel ViewModel { get; set; } = new();
 
 
@@ -79,6 +81,26 @@ namespace MD4_app
             ViewModel.HexHash = "";
             ViewModel.Input = null;
             ViewModel.IsFileHasher = false;
+        }
+
+        private void Input_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (!textBox_input.IsFocused)
+            {
+                groupBox_input.BorderBrush = new SolidColorBrush(Color.FromRgb(213, 223, 229));
+                groupBox_input.BorderThickness = new Thickness(1);
+            }  
+        }
+
+        private void Input_OnFocus(object sender, RoutedEventArgs e)
+        {
+            groupBox_input.BorderBrush = new SolidColorBrush(Color.FromRgb(0, 120, 215));
+            groupBox_input.BorderThickness = new Thickness(1.5);
+        }
+
+        private void Input_Changed(object sender, TextChangedEventArgs e)
+        {
+            ViewModel.HexHash = "";
         }
     }
 }
