@@ -37,6 +37,7 @@ namespace MD4_app.ViewModels
         public string HashHex => Hash.HexHash;
         public string? Value => Hash.Value;
         public string Label => Hash is FileMD4 ? "файл" : "строка";
+        public FontStyle FontStyle => Hash is FileMD4 ? FontStyles.Italic : FontStyles.Normal;
         public Color FontColor => isComparing ? Colors.CadetBlue : Colors.Black;
         public FontWeight FontWeight => isComparing ? FontWeights.Bold : FontWeights.Normal;
     }
