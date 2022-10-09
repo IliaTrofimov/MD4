@@ -6,34 +6,44 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 
 namespace MD4_app.ViewModels
 {
     public class HashGeneratorViewModel : BaseViewModel
     {
-        private string salt = "";
-        private string hexHash = "";
-        private string? input;
-        private string? compareHash;
-        private bool isFileHasher = false;
-        private bool isEnabled = true;
+        public MD4 Hasher = new();
 
+        private string? compareHash;
+        private bool? compareResult;
+        private bool isEnabled = true;
+        private bool isPasswordRequired = false;
+        private string saltValidationError = "";
 
         public string Salt
         {
-            get => salt;
+            get => Hasher.Salt;
             set
             {
-                salt = value;
+                Hasher.Salt = value;
                 OnPropertyChanged();
             }
         }
         public string? Input
         {
-            get => input;
+            get => Hasher.Value;
             set
             {
-                input = value;
+                Hasher.Value = value;
+                OnPropertyChanged();
+            }
+        }
+        public string HexHash
+        {
+            get => Hasher.HexHash;
+            set
+            {
+                Hasher.Value = Hasher.Value;
                 OnPropertyChanged();
             }
         }
@@ -46,27 +56,28 @@ namespace MD4_app.ViewModels
                 OnPropertyChanged();
             }
         }
-        public string HexHash
+        public bool? CompareResult
         {
-            get => hexHash;
+            get => compareResult;
             set
             {
-                hexHash = value;
+                compareResult = value;
                 OnPropertyChanged();
+                OnPropertyChanged("CompareResultString");
             }
         }
-        public bool IsFileHasher
+        public bool IsPasswordRequired
         {
-            get => isFileHasher;
+            get => isPasswordRequired;
             set
             {
-                isFileHasher = value;
+                isPasswordRequired = value;
+                if (!isPasswordRequired)
+                {
+                    Hasher.Salt = "";
+                    OnPropertyChanged("Salt");
+                }
                 OnPropertyChanged();
-                OnPropertyChanged("InputHorAligment");
-                OnPropertyChanged("InputVerAligment");
-                OnPropertyChanged("InputVeInputFontStylerAligment");
-                OnPropertyChanged("IsInputFieldEnabled");
-                OnPropertyChanged("IsStringHasher");
             }
         }
         public bool IsEnabled
@@ -77,19 +88,66 @@ namespace MD4_app.ViewModels
                 isEnabled = value;
                 OnPropertyChanged();
                 OnPropertyChanged("IsInputFieldEnabled");
+                OnPropertyChanged("InputBackground");
                 OnPropertyChanged("IsProgressing");
             }
         }
+        public string SaltValidationError
+        {
+            get => saltValidationError;
+            set
+            {
+                saltValidationError = value;
+                OnPropertyChanged();
+            }
+        }
 
-
-        public ObservableCollection<HashHistoryItemViewModel> HistoryItems { get; set; } = new();
-
-
-        public bool IsStringHasher => !IsFileHasher;
+        public string? CompareResultString => compareResult switch
+        {
+            null => null,
+            true => "хеши совпадают",
+            false => "хеши не совпадают"
+        };
+        public bool IsFileHasher => Hasher is FileMD4;
         public bool IsInputFieldEnabled => IsEnabled && !IsFileHasher;
         public FontStyle InputFontStyle => IsFileHasher ? FontStyles.Italic : FontStyles.Normal;
         public HorizontalAlignment InputHorAligment => IsFileHasher ? HorizontalAlignment.Center : HorizontalAlignment.Left;
         public VerticalAlignment InputVerAligment => IsFileHasher ? VerticalAlignment.Center : VerticalAlignment.Top;
-        public bool IsProgressing => !IsEnabled;
+
+
+        public void SetFileHasher(string filename)
+        {
+            Hasher = new FileMD4(filename, Salt);
+            OnPropertyChanged("Input");
+            OnPropertyChanged("IsFileHasher");
+            OnPropertyChanged("InputHorAligment");
+            OnPropertyChanged("InputVerAligment");
+            OnPropertyChanged("InputVeInputFontStylerAligment");
+            OnPropertyChanged("IsInputFieldEnabled");
+            OnPropertyChanged("InputBackground");
+            OnPropertyChanged("IsStringHasher");
+            OnPropertyChanged("HexHash");
+        }
+
+        public void SetStringHasher()
+        {
+            Hasher = new MD4(null, Salt);
+            OnPropertyChanged("Input");
+            OnPropertyChanged("IsFileHasher");
+            OnPropertyChanged("InputHorAligment");
+            OnPropertyChanged("InputVerAligment");
+            OnPropertyChanged("InputVeInputFontStylerAligment");
+            OnPropertyChanged("IsInputFieldEnabled");
+            OnPropertyChanged("InputBackground");
+            OnPropertyChanged("IsStringHasher");
+            OnPropertyChanged("HexHash");
+        }
+
+        public void CalcHash()
+        {
+            Hasher.Calculate();
+            OnPropertyChanged("HexHash");
+        }
+
     }
 }
