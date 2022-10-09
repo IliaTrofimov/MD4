@@ -1,9 +1,10 @@
-﻿using System.Text;
+﻿using System.Runtime.Serialization;
+using System.Text;
 
 namespace MD4_hash
 {
     /// <summary>Base class for MD4 implementations</summary>
-    public partial class MD4
+    public partial class MD4 : ICloneable
     {
         public byte[]? BytesHash => lastHash;
         public string HexHash => MD4Utility.ToHex(lastHash);
@@ -61,7 +62,17 @@ namespace MD4_hash
         }
 
 
-        public static bool operator==(MD4 h1, MD4 h2)
+        public virtual object Clone()
+        {
+            MD4 clone = new MD4();
+            clone.value = value is null ? null : (string)value.Clone();
+            clone.salt = (string)salt.Clone();
+            clone.lastHash = lastHash is null ? null : (byte[]?)lastHash.Clone();
+            return clone;
+        }
+
+
+        public static bool operator ==(MD4 h1, MD4 h2)
         {
             return h1 == h2.lastHash;
         }
@@ -73,16 +84,7 @@ namespace MD4_hash
 
         public static bool operator ==(MD4 h1, byte[] h2)
         {
-            if (h1.lastHash == null && h2 == null)
-                return true;
-            else if (h1.lastHash != null && h2 != null)
-            {
-                for (int i = 0; i < h1.lastHash.Length && i < h2.Length; i++)
-                    if (h1.lastHash[i] != h2[i]) return false;
-                return true;
-            }
-
-            return false;
+            return MD4Utility.CompareBytes(h1.lastHash, h2);
         }
 
         public static bool operator !=(MD4 h1, byte[] h2)

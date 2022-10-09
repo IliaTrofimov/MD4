@@ -17,6 +17,15 @@
         public FileMD4(string? filename = null, string salt = "") : base(filename, salt) { }
 
 
+        public override object Clone()
+        {
+            FileMD4 clone = new FileMD4(value, salt);
+            clone.value = value is null ? null : (string)value.Clone();
+            clone.salt = (string)salt.Clone();
+            clone.lastHash = lastHash is null ? null : (byte[]?)lastHash.Clone();
+            return clone;
+        }
+
         /// <summary>Returns a byte hash from a file</summary>
         override public byte[] GetByteHash(string filename)
         {
