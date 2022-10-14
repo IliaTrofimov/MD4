@@ -1,0 +1,29 @@
+﻿<Window x:Class="MD4_app.Views.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MD4_app.Views"
+        mc:Ignorable="d"
+        Title="О программе" Height="360" Width="450" ResizeMode="NoResize">
+  <StackPanel>
+    <TextBlock Text="Курсовая работа по дисциплине 'Защита данных'" Margin="5,2,5,7"/>
+    <TextBlock TextWrapping="Wrap"  Margin="5,2,5,7">
+      <Run Text="Тема:" FontStyle="Normal" FontWeight="Bold"/>
+      Программная реализация функции хеширования MD4
+    </TextBlock>
+    <TextBlock TextWrapping="Wrap"  Margin="5,2,5,7">
+      <Run Text="Выполнил:" FontStyle="Normal" FontWeight="Bold"/>
+      студент группы А-05-19, <Run Text="Трофимов Илья Сергеевич" FontStyle="Italic" FontWeight="DemiBold"/>
+    </TextBlock>
+    <Separator/>
+    <TextBlock TextWrapping="Wrap"  Margin="5,2,5,7">
+      <Run Text="Доп. требования к программе:" FontStyle="Normal" FontWeight="Bold"/>  <LineBreak/>
+      •	возможность хешировать как выбираемые файлы произвольного типа, так и вводимые текстовые сообщения с возможностью сохранения в файле полученного хеш-значения;<LineBreak/>
+      •	возможность хеширования «пустой» строки для проверки правильности реализации алгоритма на тестовых данных из его официального описания;<LineBreak/>
+      •	возможность вычисления и сохранения контрольного хеш-значения, зависящего от хешируемых данных и секретного ключа, выводимого из парольной фразы с регулируемой минимальной длиной и сложностью (секретный ключ добавляется к данным перед их хешированием);<LineBreak/>
+      •	возможность проверки целостности хешированного файла путем сравнения вновь вычисленного и ранее сохраненного хеш-значения (возможно с использованием секретного ключа, выводимого из парольной фразы).
+
+    </TextBlock>
+  </StackPanel>
+</Window>

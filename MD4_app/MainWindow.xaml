@@ -1,12 +1,170 @@
-﻿<Window x:Class="MD4_app.MainWindow"
+﻿<Window x:Class="MD4_app.MainWindow" x:Name="window"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:MD4_app"
+        xmlns:viewmodels="clr-namespace:MD4_app.ViewModels" 
+        xmlns:c="clr-namespace:MD4_app.Controls"
+        d:DataContext="{d:DesignInstance Type=viewmodels:HashGeneratorViewModel}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="MD4" 
+        Height="400" Width="800" MinHeight="250" MinWidth="500">
+  <Window.Resources>
+    <Style TargetType="c:RoundedButton" x:Key="save_copy_button">
+      <Setter Property="Visibility" Value="Visible"/>
+      <Style.Triggers>
+        <DataTrigger Binding="{Binding HexHash}" Value="">
+          <Setter Property="Visibility" Value="Collapsed" />
+        </DataTrigger>
+      </Style.Triggers>
+    </Style>
+  </Window.Resources>
 
+  <Grid Margin="5,0">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="auto"/>
+      <RowDefinition/>
+      <RowDefinition Height="auto"/>
+      <RowDefinition Height="auto"/>
+      <RowDefinition Height="auto"/>
+    </Grid.RowDefinitions>
+
+    <Menu Margin="-5,0,-5,3">
+      <MenuItem Header="Примеры" Click="Examples_Click" IsEnabled="{Binding IsEnabled}"/>
+      <MenuItem Header="Настройки" Click="Settings_Click" IsEnabled="{Binding IsEnabled}"/>
+      <MenuItem Header="О программе" Click="About_Click"/>
+    </Menu>
+
+    <c:EnhancedTextBox Grid.Row="1" BorderThickness="1.5" AcceptsReturn="True" Margin="-1.5" Text="{Binding Input}" 
+          TextChanged="Input_TextChanged">
+      <c:EnhancedTextBox.Style>
+        <Style TargetType="c:EnhancedTextBox">
+          <Setter Property="HorizontalContentAlignment" Value="Left"/>
+          <Setter Property="VerticalContentAlignment" Value="Top"/>
+          <Setter Property="FontStyle" Value="Normal"/>
+          <Setter Property="IsEnabled" Value="True"/>
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding IsFileHasher}" Value="True">
+              <Setter Property="HorizontalContentAlignment" Value="Center"/>
+              <Setter Property="VerticalContentAlignment" Value="Center"/>
+              <Setter Property="FontStyle" Value="Italic"/>
+              <Setter Property="IsEnabled" Value="False"/>
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </c:EnhancedTextBox.Style>
+      <c:EnhancedTextBox.HeaderContent>
+        <TextBlock>Введите текст или <Hyperlink Click="SetFile_Click">выберите файл</Hyperlink></TextBlock>
+      </c:EnhancedTextBox.HeaderContent>
+    </c:EnhancedTextBox>
+    <TextBlock Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Top" Padding="3,0" Margin="0,8,5,0" Background="White" LineStackingStrategy="BlockLineHeight" LineHeight="6">
+      <Hyperlink Click="Clear_Click">Очистить</Hyperlink>
+    </TextBlock>
+
+    <Grid Grid.Row="2" Margin="0,5">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="auto"/>
+        <ColumnDefinition/>
+        <ColumnDefinition Width="auto"/>
+        <ColumnDefinition Width="auto"/>
+      </Grid.ColumnDefinitions>
+
+      <c:RoundedButton Grid.Column="0" Content="Хешировать" HorizontalAlignment="Left" VerticalAlignment="Stretch" Padding="2,0" Margin="0,0,5,0" Background="Beige"
+               IsEnabled="{Binding IsEnabled}"
+               Click="Run_Click"/>
+      <TextBox Grid.Column="1" MinWidth="200px" FontFamily="Consolas" IsReadOnly="True" BorderThickness="0" CharacterCasing="Upper"
+               Text="{Binding HexHash, BindsDirectlyToSource=True, Mode=OneWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"/>
+      <c:RoundedButton Grid.Column="2" Content="Сохранить" Width="74" HorizontalAlignment="Right" VerticalAlignment="Stretch" Padding="2,0" Margin="5,0"
+               Click="SaveHash_Click" Style="{StaticResource save_copy_button}">
+        <c:RoundedButton.ToolTip>
+          <TextBlock>Сохранить хеш в файл</TextBlock>
+        </c:RoundedButton.ToolTip>
+      </c:RoundedButton>
+      <c:RoundedButton Grid.Column="3" Content="Копировать" Width="74" HorizontalAlignment="Right" VerticalAlignment="Stretch" Padding="2,0"
+               Click="CopyHash_Click" Style="{StaticResource save_copy_button}">
+        <c:RoundedButton.ToolTip>
+          <TextBlock>Скопировать хеш в буффер обмена</TextBlock>
+        </c:RoundedButton.ToolTip>
+      </c:RoundedButton>
     </Grid>
+    <Expander Grid.Row="3" IsExpanded="True" Margin="-6.5,10,-6.5,0" BorderThickness="1.5,1.5,1.5,0" BorderBrush="#FFB4B4B4">
+      <Expander.Style>
+        <Style TargetType="Expander">
+          <Style.Triggers>
+            <Trigger Property="IsExpanded" Value="False">
+              <Setter Property="Background" Value="#FFF0F0F0"/>
+            </Trigger>
+          </Style.Triggers>
+        </Style>
+      </Expander.Style>
+      
+      <Expander.Header>
+        <Label Content="Дополнительные опции" Padding="0,2"/>
+      </Expander.Header>
+      <Grid Background="White" Margin="-1">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition/>
+          <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition/>
+          <RowDefinition/>
+        </Grid.RowDefinitions>
+        
+        <c:EnhancedTextBox Grid.Row="0" Grid.Column="0" BorderThickness="1.5" AcceptsReturn="False" DockPanel.Dock="Top" FontFamily="Consolas" CharacterCasing="Lower" Margin="5,0"
+                       Text="{Binding CompareHashHex}" IsEnabled="{Binding IsEnabled}"
+                       PreviewTextInput="CompareHash_PreviewTextInput">
+          <c:EnhancedTextBox.HeaderContent>
+            <TextBlock>Введите хеш или <Hyperlink Click="LoadHash_Click">загрузите файл</Hyperlink></TextBlock>
+          </c:EnhancedTextBox.HeaderContent>
+          <c:EnhancedTextBox.ToolTip>
+            <TextBlock>Введите хеш или загрузите его из файла для сравнения с введёнными данными</TextBlock>
+          </c:EnhancedTextBox.ToolTip>
+        </c:EnhancedTextBox>
+
+        <Label Grid.Row="1" Grid.Column="0" Padding="5,0"  Margin="5,0">
+          <Label.Style>
+            <Style TargetType="Label">
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding CompareResult}" Value="True">
+                  <Setter Property="Content" Value="Хеши совпадают"/>
+                  <Setter Property="Foreground" Value="Green"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding CompareResult}" Value="False">
+                  <Setter Property="Content" Value="Хеши не совпадают"/>
+                  <Setter Property="Foreground" Value="Red"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding CompareResult}" Value="Null">
+                  <Setter Property="Content" Value=""/>
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </Label.Style>
+        </Label>
+
+        <c:EnhancedTextBox Grid.Column="1" BorderThickness="1.5" AcceptsReturn="False" Margin="5,0,5,0" VerticalAlignment="Top"
+                       Text="{Binding Salt}" IsEnabled="{Binding IsPasswordRequired}" TextChanged="Password_TextChanged">
+          <c:EnhancedTextBox.HeaderContent>
+            <TextBlock>Парольная фраза</TextBlock>
+          </c:EnhancedTextBox.HeaderContent>
+        </c:EnhancedTextBox>
+
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SaltValidationError}" Padding="10,0" TextWrapping="Wrap" Foreground="Red"/>
+
+      </Grid>
+    </Expander>
+
+    <ProgressBar Grid.Row="4" Height="17px" Background="#FFF0F0F0" BorderThickness="0,1,0,0" Margin="-5,0">
+      <ProgressBar.Style>
+        <Style TargetType="ProgressBar">
+          <Setter Property="IsIndeterminate" Value="False"/>
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding IsEnabled}" Value="False">
+              <Setter Property="IsIndeterminate" Value="True" />
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </ProgressBar.Style>
+    </ProgressBar>
+  </Grid>
 </Window>
