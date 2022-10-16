@@ -2,8 +2,10 @@
 using MD4_app.ViewModels;
 using MD4_app.Views;
 using Microsoft.Win32;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,6 +28,8 @@ namespace MD4_app
             DataContext = ViewModel;
             ViewModel.IsPasswordRequired = Properties.Settings.Default.IsPasswordRequired;
             lastPassword = ViewModel.Salt;
+
+            Title = $"MD4 [process id: {System.Environment.ProcessId}]";
         }
 
         private bool CheckPassword(bool isSilent = false)

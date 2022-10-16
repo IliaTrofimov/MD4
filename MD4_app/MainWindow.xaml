@@ -37,6 +37,22 @@
 
     <c:EnhancedTextBox Grid.Row="1" BorderThickness="1.5" AcceptsReturn="True" Margin="-1.5" Text="{Binding Input}" 
           TextChanged="Input_TextChanged">
+      <c:EnhancedTextBox.ToolTip>
+        <ToolTip>
+          <ToolTip.Style>
+            <Style TargetType="ToolTip">
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding IsFileHasher}" Value="False">
+                  <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+              </Style.Triggers>
+             
+
+            </Style>
+          </ToolTip.Style>
+          <TextBlock Text="Сейчас выбран файл, нажмите ОЧИСТИТЬ, чтобы сбросить выбор"/>
+        </ToolTip>
+      </c:EnhancedTextBox.ToolTip>
       <c:EnhancedTextBox.Style>
         <Style TargetType="c:EnhancedTextBox">
           <Setter Property="HorizontalContentAlignment" Value="Left"/>
