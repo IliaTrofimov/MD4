@@ -8,7 +8,7 @@
         d:DataContext="{d:DesignInstance Type=viewmodels:HashGeneratorViewModel}"
         mc:Ignorable="d"
         Title="MD4" 
-        Height="400" Width="800" MinHeight="250" MinWidth="500">
+        Height="400" Width="800" MinHeight="250" MinWidth="500" Closing="Window_Closing">
   <Window.Resources>
     <Style TargetType="c:RoundedButton" x:Key="save_copy_button">
       <Setter Property="Visibility" Value="Visible"/>
@@ -47,7 +47,7 @@
         </MenuItem>
         <MenuItem Header="Выбрать файл" Click="SetFile_Click" IsEnabled="{Binding IsEnabled}"/>
         <Separator/>
-        <MenuItem Header="Закрыть" />
+        <MenuItem Header="Закрыть" Click="Close_Click"/>
       </MenuItem>
       <MenuItem Header="Примеры" Click="Examples_Click" IsEnabled="{Binding IsEnabled}"/>
       <MenuItem Header="Настройки" Click="Settings_Click" IsEnabled="{Binding IsEnabled}"/>
@@ -124,7 +124,7 @@
           </Style>
         </c:RoundedButton.Style>
       </c:RoundedButton>
-      <TextBox Grid.Column="1" MinWidth="200px" FontFamily="Consolas" IsReadOnly="True" BorderThickness="0" CharacterCasing="Upper" Padding="0,4,0,0"
+      <TextBox Grid.Column="1" MinWidth="200px" FontFamily="Consolas" FontWeight="Bold" IsReadOnly="True" BorderThickness="0" CharacterCasing="Upper" Padding="0,4,0,0"
                Text="{Binding HexHash, BindsDirectlyToSource=True, Mode=OneWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}">
         <TextBox.Style>
           <Style TargetType="TextBox">
