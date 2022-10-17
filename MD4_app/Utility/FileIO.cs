@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-
+using System.Text;
 
 namespace MD4_app.Utility
 {
@@ -8,12 +8,17 @@ namespace MD4_app.Utility
     {
         public static string ReadHashFile(string filename)
         {
-            return File.ReadAllText(filename);
+            var data = File.ReadAllBytes(filename);
+            if (data == null)
+                throw new FileFormatException("Не удалось прочитать файл с контрольной суммой");
+            else if (data.Length != 16)
+                throw new FileFormatException($"Файл с контрольной суммой должен содержать ровно 16 байт данных (прочитано {data.Length} байт) ");
+            return Encoding.UTF8.GetString(data);
         }
 
-        public static void WriteHashFile(string hexhash, string filename)
+        public static void WriteHashFile(MD4_hash.MD4 hasher, string filename)
         {
-            File.WriteAllText(filename, hexhash);
+            File.WriteAllText(filename, hasher.HexHash);
         }
 
         public static string GenerateHashFileName(string value, bool isFileHash = false)
