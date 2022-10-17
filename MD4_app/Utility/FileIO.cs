@@ -4,7 +4,7 @@ using System.IO;
 
 namespace MD4_app.Utility
 {
-    public static class FileIO
+    internal static class FileIO
     {
         public static string ReadHashFile(string filename)
         {
