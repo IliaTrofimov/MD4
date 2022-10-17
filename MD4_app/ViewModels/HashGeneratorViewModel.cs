@@ -27,6 +27,7 @@ namespace MD4_app.ViewModels
             {
                 Hasher.Salt = value;
                 OnPropertyChanged();
+                OnPropertyChanged("HashBytesString");
             }
         }
         public string? Input
@@ -36,15 +37,17 @@ namespace MD4_app.ViewModels
             {
                 Hasher.Value = value;
                 OnPropertyChanged();
+                OnPropertyChanged("HashBytesString");
             }
         }
         public string HexHash
         {
-            get => Hasher.HexHash;
+            get => Hasher.HexHash.ToUpper();
             set
             {
                 Hasher.Value = Hasher.Value;
                 OnPropertyChanged();
+                OnPropertyChanged("HashBytesString");
             }
         }
         public string? CompareHashHex
@@ -110,9 +113,7 @@ namespace MD4_app.ViewModels
         };
         public bool IsFileHasher => Hasher is FileMD4;
         public bool IsInputFieldEnabled => IsEnabled && !IsFileHasher;
-        public FontStyle InputFontStyle => IsFileHasher ? FontStyles.Italic : FontStyles.Normal;
-        public HorizontalAlignment InputHorAligment => IsFileHasher ? HorizontalAlignment.Center : HorizontalAlignment.Left;
-        public VerticalAlignment InputVerAligment => IsFileHasher ? VerticalAlignment.Center : VerticalAlignment.Top;
+        public string HashBytesString => Hasher.BytesHash == null ? "" : string.Join(' ', Hasher.BytesHash);
 
 
         public void SetFileHasher(string filename)
@@ -127,6 +128,7 @@ namespace MD4_app.ViewModels
             OnPropertyChanged("InputBackground");
             OnPropertyChanged("IsStringHasher");
             OnPropertyChanged("HexHash");
+            OnPropertyChanged("HashBytesString");
         }
 
         public void SetStringHasher()
@@ -141,12 +143,14 @@ namespace MD4_app.ViewModels
             OnPropertyChanged("InputBackground");
             OnPropertyChanged("IsStringHasher");
             OnPropertyChanged("HexHash");
+            OnPropertyChanged("HashBytesString");
         }
 
         public void CalcHash()
         {
             Hasher.Calculate();
             OnPropertyChanged("HexHash");
+            OnPropertyChanged("HashBytesString");
         }
 
     }
