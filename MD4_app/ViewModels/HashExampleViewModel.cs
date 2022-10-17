@@ -8,7 +8,7 @@
         public HashExampleViewModel(string message, string hash)
         {
             Message = message;
-            Hash = hash;
+            Hash = hash == null ? null : hash.ToUpper();
         }
     }
 }

@@ -113,7 +113,7 @@ namespace MD4_app.ViewModels
         };
         public bool IsFileHasher => Hasher is FileMD4;
         public bool IsInputFieldEnabled => IsEnabled && !IsFileHasher;
-        public string HashBytesString => Hasher.BytesHash == null ? "" : string.Join(' ', Hasher.BytesHash);
+        public string HashBytesString => Hasher.BytesHash == null ? "" : $"{string.Join(' ', Hasher.BytesHash)} [{Hasher.BytesHash.Length} байт]";
 
 
         public void SetFileHasher(string filename)
