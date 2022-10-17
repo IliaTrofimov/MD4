@@ -2,12 +2,12 @@
 
 namespace MD4_app.Utility
 {
-    public enum PasswordValidationError
+    internal enum PasswordValidationError
     {
         Ok, TooShort, TooLagre, RegexNotMatched
     }
 
-    public static class PasswordValidation
+    internal static class PasswordValidation
     {
         public static PasswordValidationError Validate(string password)
         {
@@ -23,6 +23,18 @@ namespace MD4_app.Utility
             }
 
             return PasswordValidationError.Ok;
+        }
+
+        public static string GetValidationString(PasswordValidationError error)
+        {
+            return error switch
+            {
+                PasswordValidationError.TooLagre => $"Пароль должен содержать не больше {Properties.Settings.Default.PasswordMaxLength} символов",
+                PasswordValidationError.TooShort => $"Пароль должен содержать не меньше {Properties.Settings.Default.PasswordMinLength} символов",
+                PasswordValidationError.RegexNotMatched => $"Пароль должен удовлетворять рег. выражению {Properties.Settings.Default.PasswordRegex}",
+                PasswordValidationError.Ok => "",
+                _ => "Неизвестная ошибка",
+            };
         }
     }
 
