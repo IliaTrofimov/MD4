@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MD4_app.Utility.PasswordValidation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,47 +7,68 @@ using System.Threading.Tasks;
 
 namespace MD4_app.ViewModels
 {
-    public class SettingsVeiwModel : BaseViewModel
+    internal class SettingsVeiwModel : BaseViewModel
     {
-        private string? passwordRegex;
-        private int passwordMinLength = 0;
-        private int passwordMaxLength = 10;
-        private string validationErrorString = "";
+        public PasswordSymbolsRestriction passwordSymbolsRestriction = new();
         private bool isPasswordRequired = false;
 
-        public string? PasswordRegex
+        public SettingsVeiwModel(PasswordSymbolsRestriction restriction, bool isRequired)
         {
-            get => passwordRegex;
-            set
-            {
-                passwordRegex = value;
-                OnPropertyChanged();
-            }
+            this.passwordSymbolsRestriction = restriction;
+            this.isPasswordRequired = isRequired; 
         }
+
         public int PasswordMinLength
         {
-            get => passwordMinLength;
+            get => passwordSymbolsRestriction.MinLength;
             set
             {
-                passwordMinLength = value;
+                passwordSymbolsRestriction.MinLength = value;
                 OnPropertyChanged();
             }
         }
-        public int PasswordMaxLength
+        public bool MustHaveCyryllicSymbols
         {
-            get => passwordMaxLength;
+            get => passwordSymbolsRestriction.MustHaveCyryllicSymbols;
             set
             {
-                passwordMaxLength = value;
+                passwordSymbolsRestriction.MustHaveCyryllicSymbols = value;
                 OnPropertyChanged();
             }
         }
-        public string ValidationErrorString
+        public bool MustHaveLatinSymbols
         {
-            get => validationErrorString;
+            get => passwordSymbolsRestriction.MustHaveLatinSymbols;
             set
             {
-                validationErrorString = value;
+                passwordSymbolsRestriction.MustHaveLatinSymbols = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool MustHaveDigits
+        {
+            get => passwordSymbolsRestriction.MustHaveDigits;
+            set
+            {
+                passwordSymbolsRestriction.MustHaveDigits = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool MustHaveUpperCase
+        {
+            get => passwordSymbolsRestriction.MustHaveUpperCase;
+            set
+            {
+                passwordSymbolsRestriction.MustHaveUpperCase = value;
+                OnPropertyChanged();
+            }
+        }
+        public bool MustHaveSpecialSymbols
+        {
+            get => passwordSymbolsRestriction.MustHaveSpecialSymbols;
+            set
+            {
+                passwordSymbolsRestriction.MustHaveSpecialSymbols = value;
                 OnPropertyChanged();
             }
         }

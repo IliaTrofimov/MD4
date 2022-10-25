@@ -28,6 +28,8 @@ namespace MD4_app.Views
             InitializeComponent();
             Examples = new ObservableCollection<HashExampleViewModel>()
             {
+                new(@"123456789012345678901234567890123456789012345678901234567890123456
+78901234567890", "eb0a6d76f6c4ce0eb89a6c2133dc3409"),
                 new("", "31d6cfe0d16ae931b73c59d7e0c089c0"),
                 new("a", "bde52cb31de33e46245e05fbdbd6fb24"),
                 new("abc", "a448017aaf21d8525fc10ae87aa6729d"),

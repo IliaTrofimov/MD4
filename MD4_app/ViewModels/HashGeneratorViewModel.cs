@@ -10,12 +10,17 @@ using System.Windows.Media;
 
 namespace MD4_app.ViewModels
 {
-    public class HashGeneratorViewModel : BaseViewModel
+    internal enum HashCompareResult
+    {
+        None, Equal, NotEqual, WrongLength, WrongSymbol
+    }
+
+    internal class HashGeneratorViewModel : BaseViewModel
     {
         public MD4 Hasher = new();
 
         private string? compareHash;
-        private bool? compareResult;
+        private HashCompareResult compareResult = HashCompareResult.None;
         private bool isEnabled = true;
         private bool isPasswordRequired = false;
         private string saltValidationError = "";
@@ -55,11 +60,14 @@ namespace MD4_app.ViewModels
             get => compareHash;
             set
             {
-                compareHash = value;
+                compareHash = value == null || value == "" ? null : value.ToUpper();
                 OnPropertyChanged();
+                OnPropertyChanged("CompareResultString");
+                OnPropertyChanged("CompareResultStringColor");
+                OnPropertyChanged("CompareResult");
             }
         }
-        public bool? CompareResult
+        public HashCompareResult CompareResult
         {
             get => compareResult;
             set
@@ -67,6 +75,7 @@ namespace MD4_app.ViewModels
                 compareResult = value;
                 OnPropertyChanged();
                 OnPropertyChanged("CompareResultString");
+                OnPropertyChanged("CompareResultStringColor");
             }
         }
         public bool IsPasswordRequired
@@ -107,9 +116,16 @@ namespace MD4_app.ViewModels
 
         public string? CompareResultString => compareResult switch
         {
-            null => null,
-            true => "хеши совпадают",
-            false => "хеши не совпадают"
+            HashCompareResult.Equal => "хеши совпадают",
+            HashCompareResult.NotEqual => "хеши не совпадают",
+            HashCompareResult.WrongLength => "недопустимая длина (требуется 32 символов)",
+            HashCompareResult.WrongSymbol => "недопустимый символ",
+            _ => null
+        };
+        public Brush CompareResultStringColor => compareResult switch
+        {
+            HashCompareResult.Equal => Brushes.Green,
+           _ => Brushes.Red,
         };
         public bool IsFileHasher => Hasher is FileMD4;
         public bool IsInputFieldEnabled => IsEnabled && !IsFileHasher;

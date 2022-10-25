@@ -1,4 +1,5 @@
 ﻿using MD4_app.Utility;
+using MD4_app.Utility.PasswordValidation;
 using MD4_app.ViewModels;
 using MD4_app.Views;
 using Microsoft.Win32;
@@ -18,9 +19,10 @@ namespace MD4_app
     /// </summary>
     public partial class MainWindow : Window
     {
-        public HashGeneratorViewModel ViewModel { get; set; }
+        internal HashGeneratorViewModel ViewModel { get; set; }
         private string lastPassword;
         private CancellationTokenSource? runCancellationTokenSource = null;
+        private PasswordSymbolsRestriction PasswordRestrictions;
 
         public MainWindow()
         {
@@ -30,12 +32,26 @@ namespace MD4_app
             ViewModel.IsPasswordRequired = Properties.Settings.Default.IsPasswordRequired;
             lastPassword = ViewModel.Salt;
 
-            Title = $"MD4 [process id: {System.Environment.ProcessId}]";
+            PasswordRestrictions = new()
+            {
+                MustHaveUpperCase = Properties.Settings.Default.PasswordMustHaveUppercase,
+                MustHaveCyryllicSymbols = Properties.Settings.Default.PasswordMustHaveCyryllic,
+                MustHaveLatinSymbols = Properties.Settings.Default.PasswordMustHaveLatin,
+                MustHaveDigits = Properties.Settings.Default.PasswordMustHaveDigits,
+                MustHaveSpecialSymbols = Properties.Settings.Default.PasswordMustHaveSpecial,
+                MinLength = Properties.Settings.Default.PasswordMinLength
+            };
+
+
+            Title = $"MD4 [process id: {Environment.ProcessId}]";
         }
 
         private bool CheckPassword(bool isSilent = false)
         {
-            PasswordValidationError res = PasswordValidation.Validate(ViewModel.Salt);
+            if (!Properties.Settings.Default.IsPasswordRequired)
+                return true;
+
+            (PasswordValidationError res, string msg) = PasswordRestrictions.CheckPassword(ViewModel.Salt);
             if (res == PasswordValidationError.Ok)
             {
                 ViewModel.SaltValidationError = "";
@@ -44,8 +60,7 @@ namespace MD4_app
             }
             else if (!isSilent)
             {
-                ViewModel.SaltValidationError = PasswordValidation.GetValidationString(res);
-                ViewModel.Salt = lastPassword;
+                ViewModel.SaltValidationError = msg;
                 System.Media.SystemSounds.Exclamation.Play();
             }
             return false;
@@ -63,7 +78,12 @@ namespace MD4_app
             {
                 ViewModel.CalcHash();
                 if (ViewModel.CompareHashHex != null)
-                    ViewModel.CompareResult = ViewModel.CompareHashHex == ViewModel.HexHash;
+                {
+                    if (ViewModel.CompareHashHex.Length != 32)
+                        ViewModel.CompareResult = HashCompareResult.WrongLength;
+                    else
+                        ViewModel.CompareResult = ViewModel.CompareHashHex == ViewModel.HexHash ? HashCompareResult.Equal : HashCompareResult.NotEqual;
+                }
             }, runCancellationTokenSource.Token);
 
             ViewModel.IsEnabled = true;
@@ -75,7 +95,7 @@ namespace MD4_app
         // -------------------------------------------------------------------
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            SettingsWindow settings = new();
+            SettingsWindow settings = new(PasswordRestrictions);
             if (settings.ShowDialog() == true)
                 ViewModel.IsPasswordRequired = Properties.Settings.Default.IsPasswordRequired;
         }
@@ -146,7 +166,7 @@ namespace MD4_app
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.SetStringHasher();
-            ViewModel.CompareResult = null;
+            ViewModel.CompareResult = HashCompareResult.None;
         }
 
         private async void LoadHash_Click(object sender, RoutedEventArgs e)
@@ -224,15 +244,18 @@ namespace MD4_app
         private void Input_TextChanged(object sender, TextChangedEventArgs e)
         {
             ViewModel.HexHash = "";
-            ViewModel.CompareResult = null;
+            ViewModel.CompareResult = HashCompareResult.None;
         }
 
         private void CompareHash_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
+            ViewModel.CompareResult = HashCompareResult.None;
+
             if (e.Text.Any(ch => !(char.IsDigit(ch) || char.ToLower(ch) >= 'a' && char.ToLower(ch) <= 'f')))
             {
                 e.Handled = true;
                 System.Media.SystemSounds.Exclamation.Play();
+                ViewModel.CompareResult = HashCompareResult.WrongSymbol;
             }
         }
 

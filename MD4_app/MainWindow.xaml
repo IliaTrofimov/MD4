@@ -199,24 +199,9 @@
           </c:EnhancedTextBox.ToolTip>
         </c:EnhancedTextBox>
 
-        <Label Grid.Row="1" Grid.Column="0" Padding="5,0"  Margin="5,0">
-          <Label.Style>
-            <Style TargetType="Label">
-              <Style.Triggers>
-                <DataTrigger Binding="{Binding CompareResult}" Value="True">
-                  <Setter Property="Content" Value="Хеши совпадают"/>
-                  <Setter Property="Foreground" Value="Green"/>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding CompareResult}" Value="False">
-                  <Setter Property="Content" Value="Хеши не совпадают"/>
-                  <Setter Property="Foreground" Value="Red"/>
-                </DataTrigger>
-                <DataTrigger Binding="{Binding CompareResult}" Value="Null">
-                  <Setter Property="Content" Value=""/>
-                </DataTrigger>
-              </Style.Triggers>
-            </Style>
-          </Label.Style>
+        <Label Grid.Row="1" Grid.Column="0" Padding="5,0"  Margin="5,0" 
+               Content="{Binding CompareResultString}" Foreground="{Binding CompareResultStringColor}">
+          
         </Label>
 
         <c:EnhancedTextBox Grid.Column="1" BorderThickness="1.5" AcceptsReturn="False" Margin="5,0,3,0" VerticalAlignment="Top"

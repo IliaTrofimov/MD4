@@ -1,4 +1,5 @@
-﻿using MD4_app.ViewModels;
+﻿using MD4_app.Utility.PasswordValidation;
+using MD4_app.ViewModels;
 using System.Windows;
 
 namespace MD4_app.Views
@@ -8,36 +9,25 @@ namespace MD4_app.Views
     /// </summary>
     public partial class SettingsWindow : Window
     {
-        public SettingsVeiwModel ViewModel;
+        internal SettingsVeiwModel ViewModel;
 
-        public SettingsWindow()
+        internal SettingsWindow(PasswordSymbolsRestriction restriction)
         {
             InitializeComponent();
-            ViewModel = new()
-            {
-                PasswordMaxLength = Properties.Settings.Default.PasswordMaxLength,
-                PasswordMinLength = Properties.Settings.Default.PasswordMinLength,
-                PasswordRegex = Properties.Settings.Default.PasswordRegex,
-                IsPasswordRequired = Properties.Settings.Default.IsPasswordRequired
-            };
+            ViewModel = new(restriction, Properties.Settings.Default.IsPasswordRequired);
             DataContext = ViewModel;
         }
    
 
         private void Ok_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.PasswordMaxLength < ViewModel.PasswordMinLength)
-            {
-                ViewModel.ValidationErrorString = "Недопустимые значения минимальной и максимальной длины пароля";
-                System.Media.SystemSounds.Exclamation.Play();
-                return;
-            }
-
             DialogResult = true;
-            Properties.Settings.Default.PasswordMaxLength = ViewModel.PasswordMaxLength;
-            Properties.Settings.Default.PasswordMinLength = ViewModel.PasswordMinLength;
-            Properties.Settings.Default.PasswordRegex = ViewModel.PasswordRegex;
             Properties.Settings.Default.IsPasswordRequired = ViewModel.IsPasswordRequired;
+            Properties.Settings.Default.PasswordMustHaveLatin = ViewModel.MustHaveLatinSymbols;
+            Properties.Settings.Default.PasswordMustHaveCyryllic = ViewModel.MustHaveCyryllicSymbols;
+            Properties.Settings.Default.PasswordMustHaveUppercase = ViewModel.MustHaveUpperCase;
+            Properties.Settings.Default.PasswordMustHaveSpecial = ViewModel.MustHaveSpecialSymbols;
+            Properties.Settings.Default.PasswordMinLength = ViewModel.PasswordMinLength;
             Properties.Settings.Default.Save();
             Close();
         }

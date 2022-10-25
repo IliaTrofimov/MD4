@@ -7,13 +7,13 @@
         mc:Ignorable="d"
         Title="Примеры" 
         x:Name="window"
-        Height="400" Width="310" ResizeMode="NoResize">
+        Height="400" MinWidth="310" MaxWidth="600" ResizeMode="NoResize">
   <DockPanel Margin="5,5">
     <TextBlock Text="Выберите пример и нажмите ВЫБРАТЬ, чтобы перенести его хеш в основное окно." DockPanel.Dock="Top" TextWrapping="Wrap"/>
     <ListBox DockPanel.Dock="Top" Margin="0,5,0,0" x:Name="listBox_examples" VerticalAlignment="Top" Height="250">
       <ListBox.ItemTemplate>
         <DataTemplate>
-          <StackPanel Margin="5" Width="230">
+          <StackPanel Margin="5" MinWidth="280" MaxWidth="580">
             <TextBlock Text="{Binding Hash}" FontWeight="Bold" FontFamily="Consolas"/>
             <TextBlock TextWrapping="Wrap">
               "<Run Text="{Binding Message}"/>"

@@ -11,8 +11,8 @@ namespace MD4_app.Utility
             var data = File.ReadAllBytes(filename);
             if (data == null)
                 throw new FileFormatException("Не удалось прочитать файл с контрольной суммой");
-            else if (data.Length != 16)
-                throw new FileFormatException($"Файл с контрольной суммой должен содержать ровно 16 байт данных (прочитано {data.Length} байт) ");
+            else if (data.Length != 32)
+                throw new FileFormatException($"Файл с контрольной суммой должен содержать ровно 32 байт данных (прочитано {data.Length} байт) ");
             return Encoding.UTF8.GetString(data);
         }
 
