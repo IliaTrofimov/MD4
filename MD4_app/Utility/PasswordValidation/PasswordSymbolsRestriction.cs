@@ -24,7 +24,7 @@ namespace MD4_app.Utility.PasswordValidation
             else if (MustHaveLatinSymbols && !password.Any(ch => "QWERTYUIOPASDFGHJKLZXCVBNM".Contains(char.ToUpper(ch))))
                 return (PasswordValidationError.NoLatin, GetMessage(PasswordValidationError.NoLatin));
 
-            else if (MustHaveDigits && !password.Any(ch => char.IsUpper(ch)))
+            else if (MustHaveDigits && !password.Any(ch => char.IsDigit(ch)))
                 return (PasswordValidationError.NoDigits, GetMessage(PasswordValidationError.NoDigits));
 
             else if (MustHaveUpperCase && !password.Any(ch => char.IsUpper(ch)))
