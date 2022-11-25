@@ -41,30 +41,35 @@
         }
 
         /// <summary>Returns a byte hash from a file</summary>
-        public Task<byte[]> GetByteHashAsync(string filename)
+        public async Task<byte[]> GetByteHashAsync(string filename, CancellationToken cancellationToken)
         {
-            return Task.Run(() =>
-            {
-                value = filename;
-                byte[] b = File.ReadAllBytes(filename);
-                EngineReset();
-                EngineUpdate(b, 0, b.Length);
-                return lastHash = EngineDigest();
-            });
+            value = filename;
+            byte[] b = await File.ReadAllBytesAsync(value, cancellationToken);
+            EngineReset();
+            EngineUpdate(b, 0, b.Length);
+            lastHash = EngineDigest();
+            return lastHash = EngineDigest();
         }
 
         /// <summary>Returns a hexidecimal hash from a file</summary>
-        public Task<string> GetHexHashAsync(string filename)
+        public async Task<string> GetHexHashAsync(string filename, CancellationToken cancellationToken)
         {
-            return Task.Run(() =>
-            {
-                value = filename;
-                byte[] b = File.ReadAllBytes(filename);
-                EngineReset();
-                EngineUpdate(b, 0, b.Length);
-                lastHash = EngineDigest();
-                return MD4Utility.ToHex(lastHash);
-            });
+            value = filename;
+            byte[] b = await File.ReadAllBytesAsync(value, cancellationToken);
+            EngineReset();
+            EngineUpdate(b, 0, b.Length);
+            lastHash = EngineDigest();
+            return MD4Utility.ToHex(lastHash);
+        }
+
+        public override async Task CalculateAsync(CancellationToken cancellationToken)
+        {
+            if (value == null)
+                throw new Exception("Необходимо указать имя файла перед вызововм метода FileMD4.CalculateAsync()");
+
+            byte[] b = await File.ReadAllBytesAsync(value, cancellationToken);
+            EngineReset();
+            EngineUpdate(b, 0, b.Length);
         }
     }
 }

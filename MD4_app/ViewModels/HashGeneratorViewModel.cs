@@ -34,7 +34,7 @@ namespace MD4_app.ViewModels
             {
                 Hasher.Salt = value;
                 OnPropertyChanged();
-                OnPropertyChanged("HashBytesString");
+                OnPropertyChanged("HexHash");
             }
         }
         public string? Input
@@ -44,7 +44,7 @@ namespace MD4_app.ViewModels
             {
                 Hasher.Value = value;
                 OnPropertyChanged();
-                OnPropertyChanged("HashBytesString");
+                OnPropertyChanged("HexHash");
             }
         }
         public string HexHash
@@ -54,7 +54,6 @@ namespace MD4_app.ViewModels
             {
                 Hasher.Value = Hasher.Value;
                 OnPropertyChanged();
-                OnPropertyChanged("HashBytesString");
             }
         }
         public string? CompareValue
@@ -102,10 +101,7 @@ namespace MD4_app.ViewModels
             {
                 isPasswordRequired = value;
                 if (!isPasswordRequired)
-                {
-                    Hasher.Salt = "";
-                    OnPropertyChanged("Salt");
-                }
+                    Salt = "";
                 OnPropertyChanged();
             }
         }
@@ -158,7 +154,6 @@ namespace MD4_app.ViewModels
             _ => Brushes.Black,
         };
         public bool IsInputFieldEnabled => IsEnabled && !IsFileHasher;
-        public string HashBytesString => Hasher.BytesHash == null ? "" : $"{string.Join(' ', Hasher.BytesHash)} [{Hasher.BytesHash.Length} байт]";
         public Visibility ComparisionVisibility => string.IsNullOrEmpty(CompareHashHex) ? Visibility.Collapsed : Visibility.Visible;
 
         public void SetFileHasher(string filename)
@@ -173,7 +168,6 @@ namespace MD4_app.ViewModels
             OnPropertyChanged("InputBackground");
             OnPropertyChanged("IsStringHasher");
             OnPropertyChanged("HexHash");
-            OnPropertyChanged("HashBytesString");
             OnPropertyChanged("ComparisionVisibility");
         }
 
@@ -189,7 +183,6 @@ namespace MD4_app.ViewModels
             OnPropertyChanged("InputBackground");
             OnPropertyChanged("IsStringHasher");
             OnPropertyChanged("HexHash");
-            OnPropertyChanged("HashBytesString");
             OnPropertyChanged("ComparisionVisibility");
         }
 

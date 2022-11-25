@@ -10,74 +10,85 @@ namespace MD4_app.ViewModels
     internal class SettingsVeiwModel : BaseViewModel
     {
         public PasswordSymbolsRestriction passwordSymbolsRestriction = new();
-        private bool isPasswordRequired = false;
+        private bool isRestrictionEnabled = false;
+        private bool mustHaveCyrillic;
+        private bool mustHaveLatin;
+        private bool mustHaveSpecial;
+        private bool mustHaveUpper;
+        private bool mustHaveDigits;
+        private int minLength;
 
         public SettingsVeiwModel(PasswordSymbolsRestriction restriction, bool isRequired)
         {
-            this.passwordSymbolsRestriction = restriction;
-            this.isPasswordRequired = isRequired; 
+            mustHaveCyrillic = restriction.MustHaveCyryllicSymbols;
+            mustHaveLatin = restriction.MustHaveLatinSymbols;
+            mustHaveSpecial = restriction.MustHaveSpecialSymbols;
+            mustHaveUpper = restriction.MustHaveUpperCase;
+            mustHaveDigits = restriction.MustHaveDigits;
+            minLength = restriction.MinLength;
+            this.isRestrictionEnabled = isRequired; 
         }
 
         public int PasswordMinLength
         {
-            get => passwordSymbolsRestriction.MinLength;
+            get => minLength;
             set
             {
-                passwordSymbolsRestriction.MinLength = value;
+                minLength = value;
                 OnPropertyChanged();
             }
         }
         public bool MustHaveCyryllicSymbols
         {
-            get => passwordSymbolsRestriction.MustHaveCyryllicSymbols;
+            get => mustHaveCyrillic;
             set
             {
-                passwordSymbolsRestriction.MustHaveCyryllicSymbols = value;
+                mustHaveCyrillic = value;
                 OnPropertyChanged();
             }
         }
         public bool MustHaveLatinSymbols
         {
-            get => passwordSymbolsRestriction.MustHaveLatinSymbols;
+            get => mustHaveLatin;
             set
             {
-                passwordSymbolsRestriction.MustHaveLatinSymbols = value;
+                mustHaveLatin = value;
                 OnPropertyChanged();
             }
         }
         public bool MustHaveDigits
         {
-            get => passwordSymbolsRestriction.MustHaveDigits;
+            get => mustHaveDigits;
             set
             {
-                passwordSymbolsRestriction.MustHaveDigits = value;
+                mustHaveDigits = value;
                 OnPropertyChanged();
             }
         }
         public bool MustHaveUpperCase
         {
-            get => passwordSymbolsRestriction.MustHaveUpperCase;
+            get => mustHaveUpper;
             set
             {
-                passwordSymbolsRestriction.MustHaveUpperCase = value;
+                mustHaveUpper = value;
                 OnPropertyChanged();
             }
         }
         public bool MustHaveSpecialSymbols
         {
-            get => passwordSymbolsRestriction.MustHaveSpecialSymbols;
+            get => mustHaveSpecial;
             set
             {
-                passwordSymbolsRestriction.MustHaveSpecialSymbols = value;
+                mustHaveSpecial = value;
                 OnPropertyChanged();
             }
         }
-        public bool IsPasswordRequired
+        public bool IsRestrictionEnabled
         {
-            get => isPasswordRequired;
+            get => isRestrictionEnabled;
             set
             {
-                isPasswordRequired = value;
+                isRestrictionEnabled = value;
                 OnPropertyChanged();
             }
         }

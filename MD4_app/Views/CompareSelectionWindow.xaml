@@ -16,15 +16,14 @@
           Text="{Binding ComparingHashValue}" TextChanged="ComparingHashValue_TextChanged">
     </c:EnhancedTextBox>
 
-    <c:EnhancedFileInput x:Name="fileInput" Margin="-1.5,5,5,0" DockPanel.Dock="Top" BorderThickness="1.5" AcceptsReturn="True" ClearButtonVisibile="False"
+    <c:EnhancedFileInput x:Name="fileInput" Margin="-1.5,5,5,0" DockPanel.Dock="Top" BorderThickness="1.5" AcceptsReturn="True" ClearButtonVisibile="True"
           HeaderText="Загрузить из файла" PlaceholderText="Файл не выбран..." FilesFilter="Текстовый файл|*.txt"
-          Text="{Binding ComparingFile, Mode=OneWay}" FileSelected="fileInput_FileSelected">
-    </c:EnhancedFileInput>
+          Text="{Binding ComparingFile, Mode=OneWay}" FileSelected="fileInput_FileSelected" MaxHeight="80"/>
     <TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" Foreground="Red" Text="{Binding ErrorString}"/>
 
     <DockPanel Margin="0,2" DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
-      <c:RoundedButton Content="Применить" DockPanel.Dock="Left" HorizontalAlignment="Left" Width="67" VerticalAlignment="Bottom" Click="Ok_Click"/>
-      <c:RoundedButton Content="Отмена" DockPanel.Dock="Right" HorizontalAlignment="Right" Width="67" VerticalAlignment="Bottom" Click="Cancel_Click"/>
+      <c:RoundedButton Content="Применить" DockPanel.Dock="Left" HorizontalAlignment="Left" Width="67" Height="20" VerticalAlignment="Bottom" Click="Ok_Click"/>
+      <c:RoundedButton Content="Отмена" DockPanel.Dock="Right" HorizontalAlignment="Right" Width="67" Height="20" VerticalAlignment="Bottom" Click="Cancel_Click"/>
     </DockPanel>
   </DockPanel>
 </Window>

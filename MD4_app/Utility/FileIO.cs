@@ -22,6 +22,14 @@ namespace MD4_app.Utility
             return data.ToUpper();
         }
 
+        public static string ReadHashFileUnsafe(string filename)
+        {
+            var data = File.ReadAllText(filename, Encoding.UTF8);
+            if (data == null)
+                throw new FileFormatException("Не удалось прочитать файл с контрольной суммой");  
+            return data.ToUpper();
+        }
+
         public static void WriteHashFile(MD4_hash.MD4 hasher, string filename)
         {
             File.WriteAllText(filename, hasher.HexHash);

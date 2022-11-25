@@ -8,7 +8,8 @@
         d:DataContext="{d:DesignInstance Type=viewmodels:HashGeneratorViewModel}"
         mc:Ignorable="d"
         Title="MD4" 
-        Height="400" Width="800" MinHeight="400" MinWidth="515" Closing="Window_Closing">
+        Height="400" Width="800" MinHeight="400" MinWidth="425" 
+        Closing="Window_Closing" Background="WhiteSmoke">
   <Window.Resources>
     <Style TargetType="c:RoundedButton" x:Key="save_copy_button">
       <Setter Property="Visibility" Value="Visible"/>
@@ -23,17 +24,15 @@
   <Grid Margin="5,0">
     <Grid.RowDefinitions>
       <RowDefinition Height="auto"/>
-      <RowDefinition MinHeight="60"/>
       <RowDefinition Height="auto"/>
-      <RowDefinition MinHeight="150"/>
+      <RowDefinition MinHeight="100"/>
+      <RowDefinition Height="auto"/>
+      <RowDefinition Height="Auto"/>
       <RowDefinition Height="auto"/>
     </Grid.RowDefinitions>
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="4*"/>
-      <ColumnDefinition MinWidth="160"/>
-    </Grid.ColumnDefinitions>
 
-    <Menu Grid.Row="0" Grid.ColumnSpan="2" Margin="-5,0,-5,3">
+    <!-- Row 0, Меню -->
+    <Menu Grid.Row="0" Grid.ColumnSpan="2" Margin="-5,0,-5,5" Padding="1">
       <MenuItem Header="Файл">
         <MenuItem Header="Сохранить хеш" Click="SaveHash_Click">
           <MenuItem.Style>
@@ -56,10 +55,75 @@
       <MenuItem Header="О программе" Click="About_Click"/>
     </Menu>
 
-    <!-- Ввод 1 -->
-    <c:EnhancedTextBox Grid.Row="1" Grid.Column="0" Margin="-1.5,0,5,0" BorderThickness="1.5" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
-          HeaderText="Хеширование текста" PlaceholderText="Введите текст..."
-          Text="{Binding Input}" TextChanged="Input_TextChanged" TextClear="Clear_Text" VerticalAlignment="Stretch">
+    <!-- Row 1, Тип ввода, пароль -->
+    <Grid Grid.Row="1">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="auto"/>
+        <ColumnDefinition />
+        <ColumnDefinition Width="auto"/>
+      </Grid.ColumnDefinitions>
+
+      <!-- Тип ввода -->
+      <GroupBox Grid.Column="0" Header="Тип данных" Margin="0,0,10,0" BorderBrush="#FFB4B4B4"  Background="White" UseLayoutRounding="True">
+        <ComboBox BorderThickness="0" HorizontalAlignment="Stretch" IsReadOnly="True" IsEnabled="{Binding IsEnabled}">
+          <ComboBox.Background>
+            <LinearGradientBrush EndPoint="0,1">
+              <GradientStop Color="#FFF0F0F0"/>
+              <GradientStop Color="White" Offset="1"/>
+            </LinearGradientBrush>
+          </ComboBox.Background>
+          <ComboBoxItem Content="Файл" IsSelected="{Binding IsFileHasher}" BorderThickness="0"/>
+          <ComboBoxItem Content="Текст" BorderThickness="0">
+            <ComboBoxItem.Style>
+              <Style TargetType="ComboBoxItem">
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding IsFileHasher}" Value="False">
+                    <Setter Property="IsSelected" Value="True"/>
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </ComboBoxItem.Style>
+          </ComboBoxItem>
+        </ComboBox>
+      </GroupBox>
+
+      <!-- Пароль -->
+      <GroupBox Grid.Column="1" Header="Парольная фраза" UseLayoutRounding="True" IsEnabled="{Binding IsPasswordRequired}">
+        <GroupBox.Style>
+          <Style TargetType="GroupBox">
+            <Setter Property="BorderBrush" Value="{Binding BorderBrush, ElementName=pswdbox_Salt}"/>
+            <Setter Property="Background" Value="White"/>
+            <Style.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="BorderBrush" Value="{Binding SelectionBrush, ElementName=pswdbox_Salt}"/>
+              </Trigger>
+              <DataTrigger Binding="{Binding IsFocused, ElementName=pswdbox_Salt}" Value="True">
+                <Setter Property="BorderBrush" Value="{Binding SelectionBrush, ElementName=pswdbox_Salt}"/>
+              </DataTrigger>
+              <DataTrigger Binding="{Binding IsPasswordRequired}" Value="False">
+                <Setter Property="Background" Value="#FFF0F0F0"/>
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </GroupBox.Style>
+        <PasswordBox BorderThickness="0" Padding="0" Background="{x:Null}"
+          x:Name="pswdbox_Salt" IsEnabled="{Binding IsPasswordRequired}" PasswordChanged="PasswordChanged"/>
+      </GroupBox>
+
+
+      <!-- Настройки пароля -->
+      <StackPanel Grid.Column="2" VerticalAlignment="Stretch" Margin="10,9.5,0,0">
+        <c:RoundedButton HorizontalAlignment="Left" Content="Ограничения" Click="Settings_Click"
+                       IsEnabled="{Binding IsPasswordRequired}" Width="90" Background="White"/>
+        <CheckBox Margin="0,2,0,0" IsChecked="{Binding IsPasswordRequired}" Content="Использовать соль" Unchecked="PasswordUnchecked"/>
+      </StackPanel>
+
+    </Grid>
+
+    <!-- Row 2, Ввод -->
+    <c:EnhancedTextBox Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+          HeaderText="Хеширование текста" PlaceholderText="Введите текст..." TextWrapping="Wrap" AcceptsReturn="True" UseLayoutRounding="True"
+          Text="{Binding Input}" TextChanged="Input_TextChanged" TextClear="Clear_Text" >
       <c:EnhancedTextBox.Style>
         <Style TargetType="c:EnhancedTextBox">
           <Setter Property="Visibility" Value="Visible"/>
@@ -71,10 +135,8 @@
         </Style>
       </c:EnhancedTextBox.Style>
     </c:EnhancedTextBox>
-
-    <c:EnhancedFileInput Grid.Row="1" Grid.Column="0" Margin="-1.5,0,5,0" BorderThickness="1.5" AcceptsReturn="True" 
-          HeaderText="Хеширование файла" PlaceholderText="Файл не выбран..."
-          Text="{Binding Input}" TextChanged="Input_TextChanged" TextClear="Clear_Text">
+    <c:EnhancedFileInput Grid.Row="2" AcceptsReturn="True" HeaderText="Хеширование файла" PlaceholderText="Файл не выбран..." UseLayoutRounding="True"
+          Text="{Binding Input}" TextChanged="Input_TextChanged" TextClear="Clear_Text" IsEnabled="{Binding IsEnabled}">
       <c:EnhancedFileInput.Style>
         <Style TargetType="c:EnhancedFileInput">
           <Setter Property="Visibility" Value="Collapsed"/>
@@ -87,41 +149,33 @@
       </c:EnhancedFileInput.Style>
     </c:EnhancedFileInput>
 
-    <!-- Тип ввода 1 -->
-    <GroupBox Grid.Row="1" Grid.Column="1" Padding="2" BorderThickness="1.5"  Margin="0,1,0,0" VerticalAlignment="Top" Header="Тип данных" BorderBrush="#FFB4B4B4"
-          IsEnabled="{Binding IsEnabled}">
-      <StackPanel>
-        <RadioButton Content="Текстовая строка">
-          <RadioButton.Style>
-            <Style TargetType="RadioButton">
-              <Style.Triggers>
-                <DataTrigger Binding="{Binding IsFileHasher}" Value="False">
-                  <Setter Property="IsChecked" Value="True"/>
-                </DataTrigger>
-              </Style.Triggers>
-            </Style>
-          </RadioButton.Style>
-        </RadioButton>
-        <RadioButton Content="Произвольный файл" IsChecked="{Binding IsFileHasher}"/>
-      </StackPanel>
-    </GroupBox>
+    <!-- Row 3, Кнопки -->
+    <DockPanel Grid.Row="3" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="1,2,1,5" LastChildFill="False" Height="18">
+      <c:RoundedButton DockPanel.Dock="Left" Margin="0,0,10,0" Content="Вычислить" Background="Beige" Click="ToggleHashing_Click" HorizontalAlignment="Left" Width="80" IsEnabled="{Binding IsEnabled}"/>
+      <c:RoundedButton DockPanel.Dock="Left" Content="Сохранить" Click="SaveHash_Click"  HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="80" Background="White">
+        <c:RoundedButton.Style>
+          <Style TargetType="c:RoundedButton">
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding HexHash}" Value="">
+                <Setter Property="IsEnabled" Value="False"/>
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </c:RoundedButton.Style>
+      </c:RoundedButton>
 
-    <!-- Пароль -->
-    <c:EnhancedTextBox Grid.Row="2" Grid.Column="0" Margin="-1.5,0,5,0" BorderThickness="1.5" AcceptsReturn="False"
-          HeaderText="Парольная фраза" PlaceholderText="Введите парольную фразу..." ClearButtonVisibile="False"
-          Text="{Binding Salt}" Height="46" VerticalAlignment="Top">
-    </c:EnhancedTextBox>
+      <c:RoundedButton DockPanel.Dock="Right" Content="Сравнить с..." Click="SelectComparingFile_Click" HorizontalAlignment="Right" Width="80" IsEnabled="{Binding IsEnabled}" Background="White"/>
+      <TextBlock DockPanel.Dock="Right" HorizontalAlignment="Right" Visibility="{Binding ComparisionVisibility}" TextWrapping="Wrap" Margin="0,0,10,0">
+        <Hyperlink Click="Clear_Comparision">Очистить сравнение</Hyperlink>
+      </TextBlock>
 
-    <!-- Настройки пароля -->
-    <StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" Margin="1.5,10,0,0">
-      <c:RoundedButton HorizontalAlignment="Left" Content="Задать ограничения" Click="Settings_Click"/>
-      <TextBlock Margin="0,5,0,0" Padding="0" TextWrapping="Wrap" Text="{Binding SaltValidationError}" Foreground="Red"/>
-    </StackPanel>
+    </DockPanel>
 
-    <GroupBox Grid.Row="3" Grid.Column="0" Margin="0,5,5,5" Padding="2" MinHeight="100" BorderThickness="1.5" Header="Результаты" BorderBrush="#FFB4B4B4">
+    <!-- Row 4, Результат -->
+    <GroupBox Grid.Row="4" Margin="0,0,0,5" Padding="2" MinHeight="100"  Header="Результаты" BorderBrush="#FFB4B4B4" Background="White" UseLayoutRounding="True">
       <StackPanel>
         <Label Grid.Row="0" Content="Вычисленный хеш:" Padding="0" Foreground="Gray"/>
-        <TextBox Grid.Row="1" Text="{Binding HexHash}" Margin="0,0,0,5" IsReadOnly="True" BorderThickness="0" Padding="0" VerticalAlignment="Top"  FontFamily="Consolas"/>
+        <TextBox Grid.Row="1" Text="{Binding HexHash}" Margin="0,0,0,5" IsReadOnly="True" FontWeight="Bold" BorderThickness="0" Padding="0" VerticalAlignment="Top"  FontFamily="Consolas" UseLayoutRounding="False"/>
         <StackPanel Visibility="{Binding ComparisionVisibility}">
 
           <Separator/>
@@ -134,27 +188,8 @@
       </StackPanel>
     </GroupBox>
 
-    <DockPanel Grid.Row="3" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Left" Margin="1.5,15,0,6.5">
-      <c:RoundedButton Content="Вычислить хеш" Background="Beige" Click="ToggleHashing_Click" DockPanel.Dock="Top"/>
-      <c:RoundedButton Margin="0,5,0,0" Content="Сравнить с..." Click="SelectComparingFile_Click"  DockPanel.Dock="Top"/>
-      <TextBlock HorizontalAlignment="Left" DockPanel.Dock="Top" Visibility="{Binding ComparisionVisibility}">
-        <Hyperlink Click="Clear_Comparision">Очистить сравнение</Hyperlink>
-      </TextBlock>
-      <c:RoundedButton Margin="0,5,0,0" Content="Сохранить" Click="SaveHash_Click" DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
-        <c:RoundedButton.Style>
-          <Style TargetType="c:RoundedButton">
-            <Style.Triggers>
-              <DataTrigger Binding="{Binding HexHash}" Value="">
-                <Setter Property="IsEnabled" Value="False"/>
-              </DataTrigger>
-            </Style.Triggers>
-          </Style>
-        </c:RoundedButton.Style>
-      </c:RoundedButton>
-    </DockPanel>
-
-    <!--Полоса прогресса -->
-    <ProgressBar Grid.Row="4" Grid.ColumnSpan="2" Height="17px" Background="#FFF0F0F0" BorderThickness="0,1,0,0" Margin="-5,0">
+    <!--  Row 5, Полоса прогресса -->
+    <ProgressBar Grid.Row="5" Height="18" Background="#FFF0F0F0" BorderThickness="0,1,0,0" Margin="-5,0" VerticalAlignment="Top">
       <ProgressBar.Style>
         <Style TargetType="ProgressBar">
           <Setter Property="IsIndeterminate" Value="False"/>

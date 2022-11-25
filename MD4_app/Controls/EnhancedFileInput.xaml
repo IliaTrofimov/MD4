@@ -31,35 +31,41 @@
             </Style.Triggers>
           </Style>
         </GroupBox.Style>
-        <DockPanel Margin="3,0">
-          <c:RoundedButton Content="Выбрать файл" Margin="0,5" Padding="2,2" DockPanel.Dock="Left" Click="SelectFile_Click" VerticalAlignment="Top"/>
-          <Label x:Name="Label_Placeholder" Margin="8,5" Padding="0,2" DockPanel.Dock="Left" VerticalAlignment="Top" HorizontalAlignment="Left">
-            <Label.Style>
-              <Style TargetType="Label">
-                <Setter Property="Foreground" Value="Black"/>
-                <Setter Property="Content" Value="{Binding Text, ElementName=userControl}"/>
-                <Style.Triggers>
-                  <DataTrigger Binding="{Binding Text.Length, ElementName=userControl}" Value="0">
-                    <Setter Property="Foreground" Value="Gray"/>
-                    <Setter Property="Content" Value="{Binding PlaceholderText, ElementName=userControl}"/>
-                  </DataTrigger>
-                </Style.Triggers>
-              </Style>
-            </Label.Style>
-          </Label>
-          <TextBlock  HorizontalAlignment="Right" VerticalAlignment="Top" Padding="3,0" Margin="0,-8,5,0" Background="White" LineStackingStrategy="BlockLineHeight" LineHeight="6">
+        <Grid Margin="3,0">
+          <DockPanel>
+            <c:RoundedButton Content="Выбрать файл" HorizontalAlignment="Left" Margin="0,5" Padding="2,2" DockPanel.Dock="Left" Click="SelectFile_Click" VerticalAlignment="Top"
+                             IsEnabled="{Binding IsEnabled, ElementName=userControl}"/>
+           
+            <TextBlock x:Name="Label_Placeholder" Margin="8,5" Padding="0,2" DockPanel.Dock="Left" VerticalAlignment="Top" HorizontalAlignment="Left" Panel.ZIndex="10" TextWrapping="Wrap" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+              <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                  <Setter Property="Foreground" Value="Black"/>
+                  <Setter Property="Text" Value="{Binding Text, ElementName=userControl}"/>
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding Text.Length, ElementName=userControl}" Value="0">
+                      <Setter Property="Foreground" Value="Gray"/>
+                      <Setter Property="Text" Value="{Binding PlaceholderText, ElementName=userControl}"/>
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </TextBlock.Style>
+            </TextBlock>
+          </DockPanel>
+          
+          <TextBlock HorizontalAlignment="Right" VerticalAlignment="Top" Panel.ZIndex="1000" Padding="3,0" Margin="0,-8,3,0" Background="White" LineStackingStrategy="BlockLineHeight" LineHeight="6" DockPanel.Dock="Right">
             <Hyperlink Click="Clear_Click">Очистить</Hyperlink>
             <TextBlock.Style>
               <Style TargetType="TextBlock">
                 <Style.Triggers>
                   <DataTrigger Binding="{Binding ClearButtonVisibile, ElementName=userControl}" Value="False">
-                    <Setter Property="Visibility" Value="Hidden"/>
+                    <Setter Property="Visibility" Value="Collapsed"/>
                   </DataTrigger>
                 </Style.Triggers>
               </Style>
             </TextBlock.Style>
           </TextBlock>
-        </DockPanel>
+         
+        </Grid>
       </GroupBox>
       <ControlTemplate.Triggers>
         <Trigger Property="IsEnabled" Value="False">

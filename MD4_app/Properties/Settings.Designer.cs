@@ -106,5 +106,17 @@ namespace MD4_app.Properties {
                 this["IsPasswordRequired"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsRestrictionsEnabled {
+            get {
+                return ((bool)(this["IsRestrictionsEnabled"]));
+            }
+            set {
+                this["IsRestrictionsEnabled"] = value;
+            }
+        }
     }
 }

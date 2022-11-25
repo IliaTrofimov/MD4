@@ -71,15 +71,28 @@ namespace MD4_app.Views
 
         private void fileInput_FileSelected(object sender, RoutedEventArgs e)
         {
+            ViewModel.ErrorString = null;
+
             try
             {
-                ViewModel.ComparingHashValue = FileIO.ReadHashFile(fileInput.Text);
-                ViewModel.ComparingFile = fileInput.Text;
+                ViewModel.ComparingHashValue = FileIO.ReadHashFileUnsafe(fileInput.Text);
             }
             catch (Exception ex)
             {
                 ViewModel.ComparingFile = null;
                 ViewModel.ComparingHashValue = null;
+                System.Media.SystemSounds.Asterisk.Play();
+                ViewModel.ErrorString = ex.Message;
+                return;
+            }
+
+            try
+            {
+                ViewModel.ComparingFile = fileInput.Text;
+                FileIO.CheckHash(ViewModel.ComparingHashValue);
+            }
+            catch (Exception ex)
+            {
                 System.Media.SystemSounds.Asterisk.Play();
                 ViewModel.ErrorString = ex.Message;
             }
