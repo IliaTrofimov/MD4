@@ -61,6 +61,7 @@ namespace MD4_app
             {
                 ViewModel.SaltValidationError = msg;
                 System.Media.SystemSounds.Exclamation.Play();
+                MessageBox.Show(msg, "Недопустимая парольная фраза", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
         }
@@ -70,6 +71,7 @@ namespace MD4_app
             ViewModel.HexHash = "";
             if (!CheckPassword())
                 return;
+               
 
             ViewModel.IsEnabled = false;
             runCancellationTokenSource = new CancellationTokenSource();
@@ -138,13 +140,27 @@ namespace MD4_app
         {
             if (ViewModel.IsEnabled)
             {
-                if (ViewModel.IsFileHasher && string.IsNullOrWhiteSpace(ViewModel.Input))
+                if (ViewModel.IsFileHasher)
                 {
-                    ViewModel.IsEnabled = true;
-                    System.Media.SystemSounds.Exclamation.Play();
-                    MessageBox.Show("Необходимо выбрать файл", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                    return;
+                    if (string.IsNullOrWhiteSpace(ViewModel.Input))
+                    {
+                        ViewModel.IsEnabled = true;
+                        System.Media.SystemSounds.Exclamation.Play();
+                        MessageBox.Show("Необходимо выбрать файл", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                        return;
+                    }
+
+                    long fileSize = new System.IO.FileInfo(ViewModel.Input).Length;
+                    if (fileSize >= 10e6)
+                    {
+                        var res = MessageBox.Show($"Файл имеет большой размер ({fileSize/1000000} мб), вычисление контрольной суммы может занять много времени.\nВычислить контрольную сумму?", 
+                            "Предупреждение", MessageBoxButton.YesNo, 
+                            MessageBoxImage.Exclamation);
+                        if (res != MessageBoxResult.Yes)
+                            return;
+                    }
                 }
+
 
                 try
                 {
@@ -271,5 +287,9 @@ namespace MD4_app
             Properties.Settings.Default.Save();
         }
 
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

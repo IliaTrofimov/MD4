@@ -11,6 +11,7 @@ namespace MD4_app.Views
         public AboutWindow()
         {
             InitializeComponent();
+            DataContext = new ViewModels.AboutWindowViewModel();
         }
     }
 }

@@ -39,12 +39,12 @@ namespace MD4_app.Utility.PasswordValidation
         private string GetMessage(PasswordValidationError error) => error switch
         {
             PasswordValidationError.Ok => "",
-            PasswordValidationError.TooShort => $"Требуется минимум {MinLength} символов",
-            PasswordValidationError.NoDigits => "Требуется хотя бы одна цифра",
-            PasswordValidationError.NoLatin => "Требуется хотя бы одна латинская буква",
-            PasswordValidationError.NoCyryllic => "Требуется хотя бы одна кириллическая буква",
-            PasswordValidationError.NoSpecial => "Требуется хотя бы один спец. символ !?@#$%^&*()[]{}<>~.,/|\\;:",
-            PasswordValidationError.NoUppercase => "Требуется хотя бы одна заглавная буква",
+            PasswordValidationError.TooShort => $"Парольная фраза должна содержать как минимум {MinLength} символов",
+            PasswordValidationError.NoDigits => "Парольная фраза должна содержать хотя бы одна цифру",
+            PasswordValidationError.NoLatin => "Парольная фраза должна содержать хотя бы одна латинску букву",
+            PasswordValidationError.NoCyryllic => "Парольная фраза должна содержать хотя бы одну кириллическую букву",
+            PasswordValidationError.NoSpecial => "Парольная фраза должна содержать хотя бы один спец. символ из списка !\"#%&'()*,-./:;?@[\\]_{}",
+            PasswordValidationError.NoUppercase => "Парольная фраза должна содержать хотя бы одну заглавную букву",
             _ => "Неизвестная ошибка"
         };
     }

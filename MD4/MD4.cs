@@ -5,7 +5,7 @@ namespace MD4_hash
 {
     /// <summary>Base class for MD4 implementations</summary>
     [Serializable]
-    public partial class MD4
+    public class MD4
     {
         /// <summary>The size in bytes of the input block to the transformation algorithm</summary>
         protected const int BLOCK_LENGTH = 64; // = 512 / 8

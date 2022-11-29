@@ -4,19 +4,20 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MD4_app.Views" 
-        xmlns:c="clr-namespace:MD4_app.Controls" xmlns:viewmodels="clr-namespace:MD4_app.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:CompareSelectionWindowViewModel}"
+        xmlns:c="clr-namespace:MD4_app.Controls" xmlns:viewmodels="clr-namespace:MD4_app.ViewModels" 
+        d:DataContext="{d:DesignInstance Type=viewmodels:CompareSelectionWindowViewModel}"
         mc:Ignorable="d"
         x:Name="window"
         Title="Данные для сравнения" Height="250" Width="350" ResizeMode="NoResize">
   <DockPanel Margin="5,2,5,5">
     <TextBlock Margin="-1.5,0,5,0" DockPanel.Dock="Top" Text="Введите значение хеша вручную или загрузите его из файла" TextWrapping="Wrap"/>
 
-    <c:EnhancedTextBox Margin="-1.5,0,5,0" DockPanel.Dock="Top" BorderThickness="1.5" AcceptsReturn="False" MaxLength="32" FontFamily="Consolas" CharacterCasing="Upper"
+    <c:EnhancedTextBox Margin="-1.5,0,5,0" DockPanel.Dock="Top" UseLayoutRounding="True" AcceptsReturn="False" MaxLength="32" FontFamily="Consolas" CharacterCasing="Upper"
           HeaderText="Значение хеша" PlaceholderText="Введите хеш..." ClearButtonVisibile="False"
-          Text="{Binding ComparingHashValue}" TextChanged="ComparingHashValue_TextChanged">
+          Text="{Binding ComparingHashValue}" TextChanged="ComparingHashValue_TextChanged" Height="48">
     </c:EnhancedTextBox>
 
-    <c:EnhancedFileInput x:Name="fileInput" Margin="-1.5,5,5,0" DockPanel.Dock="Top" BorderThickness="1.5" AcceptsReturn="True" ClearButtonVisibile="True"
+    <c:EnhancedFileInput x:Name="fileInput" Margin="-1.5,5,5,0" DockPanel.Dock="Top" UseLayoutRounding="True" AcceptsReturn="True" ClearButtonVisibile="True"
           HeaderText="Загрузить из файла" PlaceholderText="Файл не выбран..." FilesFilter="Текстовый файл|*.txt"
           Text="{Binding ComparingFile, Mode=OneWay}" FileSelected="fileInput_FileSelected" MaxHeight="80"/>
     <TextBlock DockPanel.Dock="Top" TextWrapping="Wrap" Foreground="Red" Text="{Binding ErrorString}"/>

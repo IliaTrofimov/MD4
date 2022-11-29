@@ -7,7 +7,7 @@
         xmlns:viewmodels="clr-namespace:MD4_app.ViewModels"
         d:DataContext="{d:DesignInstance Type=viewmodels:SettingsVeiwModel}"
         mc:Ignorable="d"
-        Title="Ограничения парольной фразы" Height="254" Width="250" ResizeMode="NoResize" ShowInTaskbar="False" Background="WhiteSmoke">
+        Title="Ограничения парольной фразы" Height="254" Width="250" ResizeMode="NoResize" ShowInTaskbar="False" >
   <DockPanel Margin="5,7,5,5" >
     <CheckBox Content="Использовать ограничения" DockPanel.Dock="Top" IsChecked="{Binding IsRestrictionEnabled}" Margin="7,0,0,0"/>
 
@@ -35,8 +35,8 @@
 
 
     <DockPanel Margin="0" DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
-      <c:RoundedButton Content="Применить" DockPanel.Dock="Left" HorizontalAlignment="Left" Width="67" VerticalAlignment="Bottom" Click="Ok_Click" IsDefault="True" Background="White"/>
-      <c:RoundedButton Content="Отмена" DockPanel.Dock="Right" HorizontalAlignment="Right" Width="67" VerticalAlignment="Bottom" Click="Cancel_Click" IsCancel="True" Background="White"/>
+      <c:RoundedButton Content="Применить" DockPanel.Dock="Left" HorizontalAlignment="Left" Width="67" VerticalAlignment="Bottom" Click="Ok_Click" IsDefault="True"/>
+      <c:RoundedButton Content="Отмена" DockPanel.Dock="Right" HorizontalAlignment="Right" Width="67" VerticalAlignment="Bottom" Click="Cancel_Click" IsCancel="True"/>
     </DockPanel>
   </DockPanel>
 </Window>

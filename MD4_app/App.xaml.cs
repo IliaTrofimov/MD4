@@ -22,7 +22,8 @@ namespace MD4_app
             AssemblyName assemblyName = new AssemblyName(args.Name);
 
             var path = assemblyName.Name + ".dll";
-            if (assemblyName.CultureInfo.Equals(CultureInfo.InvariantCulture) == false) path = String.Format(@"{0}\{1}", assemblyName.CultureInfo, path);
+            if (assemblyName.CultureInfo.Equals(CultureInfo.InvariantCulture) == false) 
+                path = String.Format(@"{0}\{1}", assemblyName.CultureInfo, path);
 
             using (Stream stream = executingAssembly.GetManifestResourceStream(path))
             {

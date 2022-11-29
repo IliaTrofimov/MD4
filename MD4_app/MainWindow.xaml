@@ -9,18 +9,7 @@
         mc:Ignorable="d"
         Title="MD4" 
         Height="400" Width="800" MinHeight="400" MinWidth="425" 
-        Closing="Window_Closing" Background="WhiteSmoke">
-  <Window.Resources>
-    <Style TargetType="c:RoundedButton" x:Key="save_copy_button">
-      <Setter Property="Visibility" Value="Visible"/>
-      <Style.Triggers>
-        <DataTrigger Binding="{Binding HexHash}" Value="">
-          <Setter Property="Visibility" Value="Collapsed" />
-        </DataTrigger>
-      </Style.Triggers>
-    </Style>
-  </Window.Resources>
-
+        Closing="Window_Closing" Background="White" UseLayoutRounding="True">
   <Grid Margin="5,0">
     <Grid.RowDefinitions>
       <RowDefinition Height="auto"/>
@@ -64,14 +53,8 @@
       </Grid.ColumnDefinitions>
 
       <!-- Тип ввода -->
-      <GroupBox Grid.Column="0" Header="Тип данных" Margin="0,0,10,0" BorderBrush="#FFB4B4B4"  Background="White" UseLayoutRounding="True">
-        <ComboBox BorderThickness="0" HorizontalAlignment="Stretch" IsReadOnly="True" IsEnabled="{Binding IsEnabled}">
-          <ComboBox.Background>
-            <LinearGradientBrush EndPoint="0,1">
-              <GradientStop Color="#FFF0F0F0"/>
-              <GradientStop Color="White" Offset="1"/>
-            </LinearGradientBrush>
-          </ComboBox.Background>
+      <GroupBox Grid.Column="0" Header="Тип данных" Margin="0,0,10,0" UseLayoutRounding="True" IsEnabled="{Binding IsEnabled}">
+        <ComboBox x:Name="comboBox_inputType" Style="{StaticResource ComboBox}" BorderThickness="0" Margin="-4,0" HorizontalAlignment="Stretch" IsEnabled="{Binding IsEnabled}">
           <ComboBoxItem Content="Файл" IsSelected="{Binding IsFileHasher}" BorderThickness="0"/>
           <ComboBoxItem Content="Текст" BorderThickness="0">
             <ComboBoxItem.Style>
@@ -85,14 +68,32 @@
             </ComboBoxItem.Style>
           </ComboBoxItem>
         </ComboBox>
+        <GroupBox.Style>
+          <Style TargetType="GroupBox">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#FFB4B4B4"/>
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding IsMouseOver, ElementName=comboBox_inputType}" Value="True">
+                <Setter Property="BorderBrush" Value="#FF0078D7"/>
+              </DataTrigger>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="BorderBrush" Value="#FF0078D7"/>
+              </Trigger>
+              <DataTrigger  Binding="{Binding IsEnabled, ElementName=comboBox_inputType}" Value="False">
+                <Setter Property="Background" Value="#FFF0F0F0"/>
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </GroupBox.Style>
       </GroupBox>
 
       <!-- Пароль -->
-      <GroupBox Grid.Column="1" Header="Парольная фраза" UseLayoutRounding="True" IsEnabled="{Binding IsPasswordRequired}">
+      <GroupBox x:Name="groupBox_pswd" Grid.Column="1" Header="Парольная фраза" UseLayoutRounding="True">
         <GroupBox.Style>
           <Style TargetType="GroupBox">
             <Setter Property="BorderBrush" Value="{Binding BorderBrush, ElementName=pswdbox_Salt}"/>
-            <Setter Property="Background" Value="White"/>
+            <Setter Property="Background" Value="#FFF0F0F0"/>
+            <Setter Property="IsEnabled" Value="False"/>
             <Style.Triggers>
               <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="BorderBrush" Value="{Binding SelectionBrush, ElementName=pswdbox_Salt}"/>
@@ -103,19 +104,27 @@
               <DataTrigger Binding="{Binding IsPasswordRequired}" Value="False">
                 <Setter Property="Background" Value="#FFF0F0F0"/>
               </DataTrigger>
+              <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                  <Condition Binding="{Binding IsPasswordRequired}" Value="True"/>
+                  <Condition Binding="{Binding IsEnabled}" Value="True"/>
+                </MultiDataTrigger.Conditions>
+                <MultiDataTrigger.Setters>
+                  <Setter Property="IsEnabled" Value="True"/>
+                  <Setter Property="Background" Value="White"/>
+                </MultiDataTrigger.Setters>
+              </MultiDataTrigger>
             </Style.Triggers>
           </Style>
         </GroupBox.Style>
-        <PasswordBox BorderThickness="0" Padding="0" Background="{x:Null}"
-          x:Name="pswdbox_Salt" IsEnabled="{Binding IsPasswordRequired}" PasswordChanged="PasswordChanged"/>
+        <PasswordBox BorderThickness="0" Padding="0" Background="Transparent" x:Name="pswdbox_Salt" PasswordChanged="PasswordChanged"/>
       </GroupBox>
-
 
       <!-- Настройки пароля -->
       <StackPanel Grid.Column="2" VerticalAlignment="Stretch" Margin="10,9.5,0,0">
         <c:RoundedButton HorizontalAlignment="Left" Content="Ограничения" Click="Settings_Click"
-                       IsEnabled="{Binding IsPasswordRequired}" Width="90" Background="White"/>
-        <CheckBox Margin="0,2,0,0" IsChecked="{Binding IsPasswordRequired}" Content="Использовать соль" Unchecked="PasswordUnchecked"/>
+                       IsEnabled="{Binding IsEnabled, ElementName=groupBox_pswd}" Width="90"/>
+        <CheckBox Margin="0,2,0,0" IsChecked="{Binding IsPasswordRequired}" IsEnabled="{Binding IsEnabled}" Content="Парольная фраза" Unchecked="PasswordUnchecked"/>
       </StackPanel>
 
     </Grid>
@@ -152,7 +161,7 @@
     <!-- Row 3, Кнопки -->
     <DockPanel Grid.Row="3" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="1,2,1,5" LastChildFill="False" Height="18">
       <c:RoundedButton DockPanel.Dock="Left" Margin="0,0,10,0" Content="Вычислить" Background="Beige" Click="ToggleHashing_Click" HorizontalAlignment="Left" Width="80" IsEnabled="{Binding IsEnabled}"/>
-      <c:RoundedButton DockPanel.Dock="Left" Content="Сохранить" Click="SaveHash_Click"  HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="80" Background="White">
+      <c:RoundedButton DockPanel.Dock="Left" Content="Сохранить" Click="SaveHash_Click"  HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="80">
         <c:RoundedButton.Style>
           <Style TargetType="c:RoundedButton">
             <Style.Triggers>
@@ -164,7 +173,7 @@
         </c:RoundedButton.Style>
       </c:RoundedButton>
 
-      <c:RoundedButton DockPanel.Dock="Right" Content="Сравнить с..." Click="SelectComparingFile_Click" HorizontalAlignment="Right" Width="80" IsEnabled="{Binding IsEnabled}" Background="White"/>
+      <c:RoundedButton DockPanel.Dock="Right" Content="Сравнить с..." Click="SelectComparingFile_Click" HorizontalAlignment="Right" Width="80" IsEnabled="{Binding IsEnabled}"/>
       <TextBlock DockPanel.Dock="Right" HorizontalAlignment="Right" Visibility="{Binding ComparisionVisibility}" TextWrapping="Wrap" Margin="0,0,10,0">
         <Hyperlink Click="Clear_Comparision">Очистить сравнение</Hyperlink>
       </TextBlock>
@@ -189,7 +198,7 @@
     </GroupBox>
 
     <!--  Row 5, Полоса прогресса -->
-    <ProgressBar Grid.Row="5" Height="18" Background="#FFF0F0F0" BorderThickness="0,1,0,0" Margin="-5,0" VerticalAlignment="Top">
+    <ProgressBar Grid.Row="5" Height="18" Background="#FFF0F0F0" BorderThickness="0" Margin="-5,0" VerticalAlignment="Top">
       <ProgressBar.Style>
         <Style TargetType="ProgressBar">
           <Setter Property="IsIndeterminate" Value="False"/>

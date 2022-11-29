@@ -1,4 +1,4 @@
-﻿namespace MD4_hash
+﻿    namespace MD4_hash
 {
     /// <summary>Implements the MD4 message digest algorithm for hashing files</summary>
     public class FileMD4 : MD4
