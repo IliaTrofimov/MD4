@@ -25,19 +25,7 @@ namespace MD4_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string PasswordRegex {
-            get {
-                return ((string)(this["PasswordRegex"]));
-            }
-            set {
-                this["PasswordRegex"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
         public int PasswordMinLength {
             get {
                 return ((int)(this["PasswordMinLength"]));
@@ -49,13 +37,61 @@ namespace MD4_app.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("10")]
-        public int PasswordMaxLength {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool PasswordMustHaveCyryllic {
             get {
-                return ((int)(this["PasswordMaxLength"]));
+                return ((bool)(this["PasswordMustHaveCyryllic"]));
             }
             set {
-                this["PasswordMaxLength"] = value;
+                this["PasswordMustHaveCyryllic"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool PasswordMustHaveLatin {
+            get {
+                return ((bool)(this["PasswordMustHaveLatin"]));
+            }
+            set {
+                this["PasswordMustHaveLatin"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool PasswordMustHaveUppercase {
+            get {
+                return ((bool)(this["PasswordMustHaveUppercase"]));
+            }
+            set {
+                this["PasswordMustHaveUppercase"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool PasswordMustHaveSpecial {
+            get {
+                return ((bool)(this["PasswordMustHaveSpecial"]));
+            }
+            set {
+                this["PasswordMustHaveSpecial"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool PasswordMustHaveDigits {
+            get {
+                return ((bool)(this["PasswordMustHaveDigits"]));
+            }
+            set {
+                this["PasswordMustHaveDigits"] = value;
             }
         }
         
@@ -68,6 +104,18 @@ namespace MD4_app.Properties {
             }
             set {
                 this["IsPasswordRequired"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsRestrictionsEnabled {
+            get {
+                return ((bool)(this["IsRestrictionsEnabled"]));
+            }
+            set {
+                this["IsRestrictionsEnabled"] = value;
             }
         }
     }

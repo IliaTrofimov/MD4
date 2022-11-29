@@ -1,4 +1,5 @@
 ﻿using MD4_app.Utility;
+using MD4_app.Utility.PasswordValidation;
 using MD4_app.ViewModels;
 using MD4_app.Views;
 using Microsoft.Win32;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace MD4_app
 {
@@ -18,9 +20,9 @@ namespace MD4_app
     /// </summary>
     public partial class MainWindow : Window
     {
-        public HashGeneratorViewModel ViewModel { get; set; }
-        private string lastPassword;
+        internal HashGeneratorViewModel ViewModel { get; set; }
         private CancellationTokenSource? runCancellationTokenSource = null;
+        private PasswordSymbolsRestriction PasswordRestrictions;
 
         public MainWindow()
         {
@@ -28,33 +30,48 @@ namespace MD4_app
             ViewModel = new HashGeneratorViewModel();
             DataContext = ViewModel;
             ViewModel.IsPasswordRequired = Properties.Settings.Default.IsPasswordRequired;
-            lastPassword = ViewModel.Salt;
 
-            Title = $"MD4 [process id: {System.Environment.ProcessId}]";
+            PasswordRestrictions = new()
+            {
+                MustHaveUpperCase = Properties.Settings.Default.PasswordMustHaveUppercase,
+                MustHaveCyryllicSymbols = Properties.Settings.Default.PasswordMustHaveCyryllic,
+                MustHaveLatinSymbols = Properties.Settings.Default.PasswordMustHaveLatin,
+                MustHaveDigits = Properties.Settings.Default.PasswordMustHaveDigits,
+                MustHaveSpecialSymbols = Properties.Settings.Default.PasswordMustHaveSpecial,
+                MinLength = Properties.Settings.Default.PasswordMinLength
+            };
         }
 
-        private bool CheckPassword(bool isSilent = false)
+        private bool CheckPassword()
         {
-            PasswordValidationError res = PasswordValidation.Validate(ViewModel.Salt);
+            if (!ViewModel.IsPasswordRequired || !Properties.Settings.Default.IsRestrictionsEnabled)
+            {
+                ViewModel.SaltValidationError = "";
+                return true;
+            }
+
+            (PasswordValidationError res, string msg) = PasswordRestrictions.CheckPassword(ViewModel.Salt);
+       
             if (res == PasswordValidationError.Ok)
             {
                 ViewModel.SaltValidationError = "";
-                lastPassword = ViewModel.Salt;
                 return true;
             }
-            else if (!isSilent)
+            else 
             {
-                ViewModel.SaltValidationError = PasswordValidation.GetValidationString(res);
-                ViewModel.Salt = lastPassword;
+                ViewModel.SaltValidationError = msg;
                 System.Media.SystemSounds.Exclamation.Play();
+                MessageBox.Show(msg, "Недопустимая парольная фраза", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
             }
-            return false;
         }
 
         private async Task RunHashing()
         {
+            ViewModel.HexHash = "";
             if (!CheckPassword())
                 return;
+               
 
             ViewModel.IsEnabled = false;
             runCancellationTokenSource = new CancellationTokenSource();
@@ -63,10 +80,20 @@ namespace MD4_app
             {
                 ViewModel.CalcHash();
                 if (ViewModel.CompareHashHex != null)
-                    ViewModel.CompareResult = ViewModel.CompareHashHex == ViewModel.HexHash;
+                {
+                    if (ViewModel.CompareHashHex.Length != 32)
+                        ViewModel.CompareResult = HashCompareResult.WrongLength;
+                    else
+                        ViewModel.CompareResult = ViewModel.CompareHashHex == ViewModel.HexHash ? HashCompareResult.Equal : HashCompareResult.NotEqual;
+                }
             }, runCancellationTokenSource.Token);
-
             ViewModel.IsEnabled = true;
+
+            if (ViewModel.Input == "")
+            {
+                System.Media.SystemSounds.Hand.Play();
+                MessageBox.Show("Была хеширована пустая строка", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Information);
+            }               
         }
 
 
@@ -75,9 +102,8 @@ namespace MD4_app
         // -------------------------------------------------------------------
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            SettingsWindow settings = new();
-            if (settings.ShowDialog() == true)
-                ViewModel.IsPasswordRequired = Properties.Settings.Default.IsPasswordRequired;
+            SettingsWindow settings = new(PasswordRestrictions);
+            settings.ShowDialog();
         }
 
         private void About_Click(object sender, RoutedEventArgs e)
@@ -86,23 +112,8 @@ namespace MD4_app
             about.ShowDialog();
         }
 
-        private void Help_Click(object sender, RoutedEventArgs e)
-        {
-            string helpMessage = "Доступные действия:\n" +
-                "-----------------------------------------------------------\n" +
-                "• Для хеширования строки введите текст в поле ввода;\n" +
-                "• Для хеширования файла назмите на сслыку 'ВЫБЕРИТЕ ФАЙЛ' в заголовке поля ввода или в меню 'ФАЙЛ';\n" +
-                "• Чтобы сбросить выбор файла или очистить поле ввода нажмите 'ОЧИСТИТЬ';\n\n" +
-                "• Для сохранения хеша в текстовый файл нажмите кнопку 'СОХРАНИТЬ' или 'СОХРАНИТЬ ХЕШ' в меню 'ФАЙЛ';\n" +
-                "• Для копирвания хеша в буффер обмена нажмите кнопку 'КОПИРОВАТЬ';\n\n" +
-                "• Чтобы сравнить хеш введённой строки (файла) введите 16-ричное значение сравниваемого хеша (или загрузите файл с хешем) в поле внизу окна;\n" +
-                "• Для сравненеия используются файлы с хешами, которые программа создаёт при сохранении хеша;\n\n" +
-                "• Чтобы добавить 'соль' к хешу включите в меню 'НАСТРОЙКИ' опцию 'ТРЕБОВАТЬ ПАРОЛЬ' и введите парольную фразу в поле справа внизу окна.";
-            MessageBox.Show(helpMessage, "Помощь", MessageBoxButton.OK, MessageBoxImage.Question);
-        }
-
         private void Close_Click(object sender, RoutedEventArgs e)
-        {      
+        {
             Close();
         }
 
@@ -114,6 +125,7 @@ namespace MD4_app
                 ViewModel.SetStringHasher();
                 ViewModel.CompareHashHex = examples.SelectedItem.Hash;
                 ViewModel.Input = examples.SelectedItem.Message;
+                ViewModel.CompareValue = null;
             }
         }
 
@@ -128,6 +140,28 @@ namespace MD4_app
         {
             if (ViewModel.IsEnabled)
             {
+                if (ViewModel.IsFileHasher)
+                {
+                    if (string.IsNullOrWhiteSpace(ViewModel.Input))
+                    {
+                        ViewModel.IsEnabled = true;
+                        System.Media.SystemSounds.Exclamation.Play();
+                        MessageBox.Show("Необходимо выбрать файл", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                        return;
+                    }
+
+                    long fileSize = new System.IO.FileInfo(ViewModel.Input).Length;
+                    if (fileSize >= 10e6)
+                    {
+                        var res = MessageBox.Show($"Файл имеет большой размер ({fileSize/1000000} мб), вычисление контрольной суммы может занять много времени.\nВычислить контрольную сумму?", 
+                            "Предупреждение", MessageBoxButton.YesNo, 
+                            MessageBoxImage.Exclamation);
+                        if (res != MessageBoxResult.Yes)
+                            return;
+                    }
+                }
+
+
                 try
                 {
                     await RunHashing();
@@ -136,46 +170,17 @@ namespace MD4_app
                 {
                     ViewModel.IsEnabled = true;
                     System.Media.SystemSounds.Asterisk.Play();
-                    MessageBox.Show(ex.Message, "Ошибка");
+                    MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             else if (runCancellationTokenSource != null && !runCancellationTokenSource.IsCancellationRequested)
+            {
                 runCancellationTokenSource.Cancel();
-        }
-
-        private void Clear_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.SetStringHasher();
-            ViewModel.CompareResult = null;
-        }
-
-        private async void LoadHash_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog dialog = new OpenFileDialog()
-            {
-                CheckFileExists = true,
-                CheckPathExists = true,
-                Filter = "Текстовые файлы|*.txt|Любой файл|*.*",
-                Title = "Загрузить контрольную сумму"
-            };
-            if (dialog.ShowDialog() == true)
-            {
-                ViewModel.IsEnabled = false;
-                try
-                {
-                    await Task.Run(() => ViewModel.CompareHashHex = FileIO.ReadHashFile(dialog.FileName));
-                }
-                catch (Exception ex)
-                {
-                    System.Media.SystemSounds.Asterisk.Play();
-                    MessageBox.Show(ex.Message, "Ошибка");
-                }
-                finally
-                {
-                    ViewModel.IsEnabled = true;
-                }
+                ViewModel.HexHash = "";
+                ViewModel.IsEnabled = true;
             }
         }
+
 
         private async void SaveHash_Click(object sender, RoutedEventArgs e)
         {
@@ -202,21 +207,29 @@ namespace MD4_app
                 {
                     ViewModel.IsEnabled = true;
                 }
-           }
-        }
-
-        private void CopyHash_Click(object sender, RoutedEventArgs e)
-        {
-            if (ViewModel.HexHash == "")
-                System.Media.SystemSounds.Asterisk.Play();
-            else
-            {
-                Clipboard.SetText(ViewModel.HexHash);
-                System.Media.SystemSounds.Hand.Play();
-                MessageBox.Show("Значение хеша скопировано в буффер обмена", "Скопировано");
             }
         }
 
+        private async void SelectComparingFile_Click(object sender, RoutedEventArgs e)
+        {
+            CompareSelectionWindow compareWinodw = new();
+            if (compareWinodw.ShowDialog() == true)
+            {
+                ViewModel.CompareHashHex = compareWinodw.ComparingHashValue;
+                ViewModel.CompareValue = compareWinodw.ComparingFile;
+
+                if (ViewModel.IsFileHasher && string.IsNullOrWhiteSpace(ViewModel.Input))
+                {
+                    ViewModel.IsEnabled = true;
+                    System.Media.SystemSounds.Exclamation.Play();
+                    MessageBox.Show("Нет данных для сравнения.\n\nВыберите файл или введите текст и нажмите\nВЫЧИСЛИТЬ ХЕШ для сравнения с загруженным хешем.", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    return;
+                }
+
+                if (ViewModel.CompareHashHex != null)
+                    await RunHashing();
+            }
+        }
 
 
         // Input
@@ -224,21 +237,41 @@ namespace MD4_app
         private void Input_TextChanged(object sender, TextChangedEventArgs e)
         {
             ViewModel.HexHash = "";
-            ViewModel.CompareResult = null;
+            ViewModel.CompareResult = HashCompareResult.None;
         }
 
         private void CompareHash_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
+            ViewModel.CompareResult = HashCompareResult.None;
+
             if (e.Text.Any(ch => !(char.IsDigit(ch) || char.ToLower(ch) >= 'a' && char.ToLower(ch) <= 'f')))
             {
                 e.Handled = true;
                 System.Media.SystemSounds.Exclamation.Play();
+                ViewModel.CompareResult = HashCompareResult.WrongSymbol;
             }
         }
 
-        private void Password_TextChanged(object sender, TextChangedEventArgs e)
+        private void Clear_Comparision(object sender, RoutedEventArgs e)
         {
-            CheckPassword(true);
+            ViewModel.CompareHashHex = null;
+            ViewModel.CompareValue = null;
+            ViewModel.CompareResult = HashCompareResult.None;
+        }
+
+        private void Clear_Text(object sender, RoutedEventArgs e)
+        {
+            ViewModel.SetStringHasher();
+            ViewModel.CompareResult = HashCompareResult.None;
+        }
+        private void PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Salt = ((PasswordBox)sender).Password;
+        }
+
+        private void PasswordUnchecked(object sender, RoutedEventArgs e)
+        {
+            pswdbox_Salt.Password = "";
         }
 
 
@@ -249,6 +282,14 @@ namespace MD4_app
         {
             if (runCancellationTokenSource != null && !runCancellationTokenSource.IsCancellationRequested)
                 runCancellationTokenSource.Cancel();
+
+            Properties.Settings.Default.IsPasswordRequired = ViewModel.IsPasswordRequired;
+            Properties.Settings.Default.Save();
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

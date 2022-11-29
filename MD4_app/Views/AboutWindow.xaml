@@ -5,25 +5,99 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MD4_app.Views"
         mc:Ignorable="d"
-        Title="О программе" Height="360" Width="450" ResizeMode="NoResize">
-  <StackPanel>
-    <TextBlock Text="Курсовая работа по дисциплине 'Защита данных'" Margin="5,2,5,7"/>
-    <TextBlock TextWrapping="Wrap"  Margin="5,2,5,7">
-      <Run Text="Тема:" FontStyle="Normal" FontWeight="Bold"/>
-      Программная реализация функции хеширования MD4
-    </TextBlock>
-    <TextBlock TextWrapping="Wrap"  Margin="5,2,5,7">
-      <Run Text="Выполнил:" FontStyle="Normal" FontWeight="Bold"/>
-      студент группы А-05-19, <Run Text="Трофимов Илья Сергеевич" FontStyle="Italic" FontWeight="DemiBold"/>
-    </TextBlock>
-    <Separator/>
-    <TextBlock TextWrapping="Wrap"  Margin="5,2,5,7">
-      <Run Text="Доп. требования к программе:" FontStyle="Normal" FontWeight="Bold"/>  <LineBreak/>
-      •	возможность хешировать как выбираемые файлы произвольного типа, так и вводимые текстовые сообщения с возможностью сохранения в файле полученного хеш-значения;<LineBreak/>
-      •	возможность хеширования «пустой» строки для проверки правильности реализации алгоритма на тестовых данных из его официального описания;<LineBreak/>
-      •	возможность вычисления и сохранения контрольного хеш-значения, зависящего от хешируемых данных и секретного ключа, выводимого из парольной фразы с регулируемой минимальной длиной и сложностью (секретный ключ добавляется к данным перед их хешированием);<LineBreak/>
-      •	возможность проверки целостности хешированного файла путем сравнения вновь вычисленного и ранее сохраненного хеш-значения (возможно с использованием секретного ключа, выводимого из парольной фразы).
+        x:Name="window"
+        Title="О программе" Height="360" Width="450" ResizeMode="NoResize" UseLayoutRounding="True">
+  <Grid Margin="5">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="60"/>
+      <RowDefinition/>
+    </Grid.RowDefinitions>
+    <Grid VerticalAlignment="Top">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="auto"/>
+        <ColumnDefinition/>
+        <ColumnDefinition Width="65"/>
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition/>
+        <RowDefinition/>
+        <RowDefinition/>
+      </Grid.RowDefinitions>
 
-    </TextBlock>
-  </StackPanel>
+      <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,5" Padding="0" FontWeight="Bold" Text="Программная реализация функции хеширования MD4"/>
+      <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,0,5,0" Padding="0" FontWeight="Bold" Text="Выполнил:"/>
+      <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,0,5,0" Padding="0" FontWeight="Bold" Text="Сборка:"/>
+
+      <TextBlock Grid.Row="1" Grid.Column="1" Margin="0,0,0,0" Padding="0" Text="Трофимов Илья Сергеевич, группа А-05-19"/>
+      <TextBlock Grid.Row="2" Grid.Column="1" Margin="0,0,0,0" Padding="0" Text="{Binding BuildVersion}"/>
+
+      <Image Grid.RowSpan="3" Grid.Column="2" Source="/Resources/main_icon.ico"/>
+    </Grid>
+
+
+    <TabControl Grid.Row="1">
+      <TabItem Header="Задание">
+        <StackPanel>
+          <TextBlock Text="Курсовая работа по дисциплине 'Защита данных'" Margin="5,2,5,7"/>
+          <TextBlock TextWrapping="Wrap"  Margin="5,2,5,7">
+            <Run Text="Тема:" FontStyle="Normal" FontWeight="Bold"/> Программная реализация функции хеширования MD4
+          </TextBlock>
+
+          <Separator/>
+          <StackPanel >
+            <TextBlock Text="Доп. требования к программе:"/>
+            <ScrollViewer VerticalAlignment="Top" Height="150">
+              <StackPanel CanVerticallyScroll="True" ScrollViewer.CanContentScroll="True">
+                <TextBlock Margin="2,0,0,3" TextWrapping="Wrap" Text="•	возможность хешировать как выбираемые файлы произвольного типа, так и вводимые текстовые сообщения с возможностью сохранения в файле полученного хеш-значения;"/>
+                <TextBlock Margin="2,0,0,3" TextWrapping="Wrap" Text="•	возможность хеширования «пустой» строки для проверки правильности реализации алгоритма на тестовых данных из его официального описания;"/>
+                <TextBlock Margin="2,0,0,3" TextWrapping="Wrap" Text="•	возможность вычисления и сохранения контрольного хеш-значения, зависящего от хешируемых данных и секретного ключа, выводимого из парольной фразы с регулируемой минимальной длиной и сложностью (секретный ключ добавляется к данным перед их хешированием"/>
+                <TextBlock Margin="2,0,0,3" TextWrapping="Wrap" Text="•	возможность проверки целостности хешированного файла путем сравнения вновь вычисленного и ранее сохраненного хеш-значения (возможно с использованием секретного ключа, выводимого из парольной фразы)."/>
+              </StackPanel>
+            </ScrollViewer>
+          </StackPanel>
+        </StackPanel>
+      </TabItem>
+      <TabItem Header="Функции программы">
+        <StackPanel >
+          <ScrollViewer VerticalAlignment="Top" Height="220">
+            <StackPanel CanVerticallyScroll="True" ScrollViewer.CanContentScroll="True">
+              <TextBlock Margin="0,0,0,0" TextWrapping="Wrap" FontWeight="Bold" Text="Вычисление контрольной суммы текста и произвольных файлов"/>
+              <TextBlock Margin="10,0,0,0" TextWrapping="Wrap">
+                Для вычисления контрольной суммы текста выберите <Run FontFamily="Consolas" Background="LightGray">Текст</Run> в выпадающем списке <Run FontFamily="Consolas" Background="LightGray">Тип данных</Run>, 
+                после чего введите текст в поле и нажмите кнопку <Run FontFamily="Consolas" Background="LightGray">Вычислить</Run>.<LineBreak/>
+                Для вычисления контрольной суммы файла выберите <Run FontFamily="Consolas" Background="LightGray">Файл</Run>, нажмите кнопку <Run FontFamily="Consolas" Background="LightGray">Выбрать файл</Run> 
+                и в открывшемся диалоговом окне выберите файл на компьютере. Обратите внимание, что обработка больших файлов может занять долгое время.
+              </TextBlock>
+              
+              <Separator Margin="0,5,0,5"/>
+              <TextBlock Margin="0,0,0,0" TextWrapping="Wrap" FontWeight="Bold" Text="Сохранение вычисленной контрольной суммы"/>
+              <TextBlock Margin="10,0,0,0" TextWrapping="Wrap">
+                После того, как контрольная сумма текста или файла была вычислена, результат можно сохранить в файл. Для этого
+                нажмите кнопку <Run FontFamily="Consolas" Background="LightGray">Сохранить</Run>, в открывшемся диалоговом окне выберите директорию, в которую будет сохранён файл,
+                и введите название (или оставьте название по умолчанию).
+              </TextBlock>
+              
+              <Separator Margin="0,5,0,5"/>
+              <TextBlock Margin="0,0,0,0" TextWrapping="Wrap" FontWeight="Bold" Text="Проверка целостности файлов"/>
+              <TextBlock Margin="10,0,0,0" TextWrapping="Wrap">
+                Для проверки целостности ранее хешированных файлов нажмите кнопку <Run FontFamily="Consolas" Background="LightGray">Сравнить с...</Run>. 
+                В открывшемся окне можно загрузить значение контрольной суммы из файла. Для этого нажмите <Run FontFamily="Consolas" Background="LightGray">Выбрать файл</Run> 
+                и выберите текстовой файл с хешем внутри. Значение хеша также можно ввести вручную в поле ввода.<LineBreak/>
+                Затем нажмите <Run FontFamily="Consolas" Background="LightGray">OK</Run> и загруженный хеш будет перенесён на основной экран программы. 
+                При вычислении новой контрольной суммы, она автоматически сравнится с загруженной.
+              </TextBlock>
+
+              <Separator Margin="0,5,0,5"/>
+              <TextBlock Margin="0,0,0,0" TextWrapping="Wrap" FontWeight="Bold" Text="Использование парольной фразы"/>
+              <TextBlock Margin="10,0,0,0" TextWrapping="Wrap">
+                Для подмешивания секретного ключа к контрольной суммы, установите галочку напротив поля <Run FontFamily="Consolas" Background="LightGray">Парольная фраза</Run>
+                и введите парольную фразу в соответсвующем поле.<LineBreak/>
+                Для задания дополнительных требований к сложности парольной фразы нажмите кнопку <Run FontFamily="Consolas" Background="LightGray">Ограничения</Run> и выберите необходимые параметры.
+              </TextBlock>
+            </StackPanel>
+          </ScrollViewer>
+        </StackPanel>
+      </TabItem>
+    </TabControl>
+  </Grid>
 </Window>

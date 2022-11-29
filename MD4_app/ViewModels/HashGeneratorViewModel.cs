@@ -10,12 +10,19 @@ using System.Windows.Media;
 
 namespace MD4_app.ViewModels
 {
-    public class HashGeneratorViewModel : BaseViewModel
+    internal enum HashCompareResult
+    {
+        None, Equal, NotEqual, WrongLength, WrongSymbol
+    }
+
+    internal class HashGeneratorViewModel : BaseViewModel
     {
         public MD4 Hasher = new();
 
         private string? compareHash;
-        private bool? compareResult;
+        private string? compareValue;
+        private bool isFileHash;
+        private HashCompareResult compareResult = HashCompareResult.None;
         private bool isEnabled = true;
         private bool isPasswordRequired = false;
         private string saltValidationError = "";
@@ -27,7 +34,7 @@ namespace MD4_app.ViewModels
             {
                 Hasher.Salt = value;
                 OnPropertyChanged();
-                OnPropertyChanged("HashBytesString");
+                OnPropertyChanged("HexHash");
             }
         }
         public string? Input
@@ -37,7 +44,7 @@ namespace MD4_app.ViewModels
             {
                 Hasher.Value = value;
                 OnPropertyChanged();
-                OnPropertyChanged("HashBytesString");
+                OnPropertyChanged("HexHash");
             }
         }
         public string HexHash
@@ -47,7 +54,19 @@ namespace MD4_app.ViewModels
             {
                 Hasher.Value = Hasher.Value;
                 OnPropertyChanged();
-                OnPropertyChanged("HashBytesString");
+            }
+        }
+        public string? CompareValue
+        {
+            get => compareValue;
+            set
+            {
+                compareValue = value;
+                OnPropertyChanged();
+                OnPropertyChanged("CompareResultString");
+                OnPropertyChanged("CompareResultStringColor");
+                OnPropertyChanged("CompareResult");
+                OnPropertyChanged("ComparisionVisibility");
             }
         }
         public string? CompareHashHex
@@ -55,11 +74,15 @@ namespace MD4_app.ViewModels
             get => compareHash;
             set
             {
-                compareHash = value;
+                compareHash = value == null || value == "" ? null : value.ToUpper();
                 OnPropertyChanged();
+                OnPropertyChanged("CompareResultString");
+                OnPropertyChanged("CompareResultStringColor");
+                OnPropertyChanged("CompareResult");
+                OnPropertyChanged("ComparisionVisibility");
             }
         }
-        public bool? CompareResult
+        public HashCompareResult CompareResult
         {
             get => compareResult;
             set
@@ -67,6 +90,8 @@ namespace MD4_app.ViewModels
                 compareResult = value;
                 OnPropertyChanged();
                 OnPropertyChanged("CompareResultString");
+                OnPropertyChanged("CompareResultStringColor");
+                OnPropertyChanged("ComparisionVisibility");
             }
         }
         public bool IsPasswordRequired
@@ -76,10 +101,7 @@ namespace MD4_app.ViewModels
             {
                 isPasswordRequired = value;
                 if (!isPasswordRequired)
-                {
-                    Hasher.Salt = "";
-                    OnPropertyChanged("Salt");
-                }
+                    Salt = "";
                 OnPropertyChanged();
             }
         }
@@ -95,6 +117,18 @@ namespace MD4_app.ViewModels
                 OnPropertyChanged("IsProgressing");
             }
         }
+        public bool IsFileHasher
+        {
+            get => isFileHash;
+            set
+            {
+                isFileHash = value;
+                if (isFileHash)
+                    SetFileHasher(null);
+                else
+                    SetStringHasher();
+            }
+        }
         public string SaltValidationError
         {
             get => saltValidationError;
@@ -107,14 +141,20 @@ namespace MD4_app.ViewModels
 
         public string? CompareResultString => compareResult switch
         {
-            null => null,
-            true => "хеши совпадают",
-            false => "хеши не совпадают"
+            HashCompareResult.Equal => "хеши совпадают",
+            HashCompareResult.NotEqual => "хеши не совпадают",
+            HashCompareResult.WrongLength => "недопустимая длина (требуется 32 символов)",
+            HashCompareResult.WrongSymbol => "недопустимый символ",
+            _ => null
         };
-        public bool IsFileHasher => Hasher is FileMD4;
+        public Brush CompareResultStringColor => compareResult switch
+        {
+            HashCompareResult.Equal => Brushes.Green,
+            HashCompareResult.NotEqual or HashCompareResult.WrongLength or HashCompareResult.WrongSymbol => Brushes.Red,
+            _ => Brushes.Black,
+        };
         public bool IsInputFieldEnabled => IsEnabled && !IsFileHasher;
-        public string HashBytesString => Hasher.BytesHash == null ? "" : $"{string.Join(' ', Hasher.BytesHash)} [{Hasher.BytesHash.Length} байт]";
-
+        public Visibility ComparisionVisibility => string.IsNullOrEmpty(CompareHashHex) ? Visibility.Collapsed : Visibility.Visible;
 
         public void SetFileHasher(string filename)
         {
@@ -128,7 +168,7 @@ namespace MD4_app.ViewModels
             OnPropertyChanged("InputBackground");
             OnPropertyChanged("IsStringHasher");
             OnPropertyChanged("HexHash");
-            OnPropertyChanged("HashBytesString");
+            OnPropertyChanged("ComparisionVisibility");
         }
 
         public void SetStringHasher()
@@ -143,7 +183,7 @@ namespace MD4_app.ViewModels
             OnPropertyChanged("InputBackground");
             OnPropertyChanged("IsStringHasher");
             OnPropertyChanged("HexHash");
-            OnPropertyChanged("HashBytesString");
+            OnPropertyChanged("ComparisionVisibility");
         }
 
         public void CalcHash()
@@ -151,6 +191,7 @@ namespace MD4_app.ViewModels
             Hasher.Calculate();
             OnPropertyChanged("HexHash");
             OnPropertyChanged("HashBytesString");
+            OnPropertyChanged("ComparisionVisibility");
         }
 
     }
