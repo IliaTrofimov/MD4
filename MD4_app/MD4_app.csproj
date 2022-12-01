@@ -14,7 +14,7 @@
 		<PackageIcon>main_icon.ico</PackageIcon>
 		<AssemblyVersion></AssemblyVersion>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-		<DebugType>none</DebugType>
+		<DebugType>embedded</DebugType>
 		<EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
 		<AnalysisLevel>latest</AnalysisLevel>
 		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
@@ -22,6 +22,7 @@
 		<Product>MD4 app</Product>
 		<Company>MPEI</Company>
 		<Authors>Илья Трофимов</Authors>
+		<StartupObject></StartupObject>
   </PropertyGroup>
 	
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

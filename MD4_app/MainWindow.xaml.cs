@@ -122,7 +122,7 @@ namespace MD4_app
             ExamplesWindow examples = new();
             if (examples.ShowDialog() == true)
             {
-                ViewModel.SetStringHasher();
+                ViewModel.IsFileHasher = false;
                 ViewModel.CompareHashHex = examples.SelectedItem.Hash;
                 ViewModel.Input = examples.SelectedItem.Message;
                 ViewModel.CompareValue = null;

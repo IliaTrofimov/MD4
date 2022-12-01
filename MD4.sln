@@ -10,6 +10,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MD4_app", "MD4_app\MD4_app.
 		{2053FEF1-D1AF-47CC-A4D3-07AA35E20920} = {2053FEF1-D1AF-47CC-A4D3-07AA35E20920}
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MD4_Test", "MD4_Test\MD4_Test.csproj", "{5442DE72-A58A-4DEE-ADA3-E24CD1F96BDD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0DF3D002-89BD-476B-8919-4E84F0A89C21}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +31,10 @@ Global
 		{DF94CCE6-F70D-45A7-A783-FDB46AFD58CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF94CCE6-F70D-45A7-A783-FDB46AFD58CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF94CCE6-F70D-45A7-A783-FDB46AFD58CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5442DE72-A58A-4DEE-ADA3-E24CD1F96BDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5442DE72-A58A-4DEE-ADA3-E24CD1F96BDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5442DE72-A58A-4DEE-ADA3-E24CD1F96BDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5442DE72-A58A-4DEE-ADA3-E24CD1F96BDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

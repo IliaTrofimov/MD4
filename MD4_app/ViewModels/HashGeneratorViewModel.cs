@@ -17,7 +17,7 @@ namespace MD4_app.ViewModels
 
     internal class HashGeneratorViewModel : BaseViewModel
     {
-        public MD4 Hasher = new();
+        public IHasher Hasher = new MD4();
 
         private string? compareHash;
         private string? compareValue;
@@ -26,7 +26,17 @@ namespace MD4_app.ViewModels
         private bool isEnabled = true;
         private bool isPasswordRequired = false;
         private string saltValidationError = "";
-
+        private HashingProgress progress = new HashingProgress(HashingStatus.Done);
+        
+        public HashingProgress Progress
+        {
+            get => progress;
+            set
+            {
+                progress = value;
+                OnPropertyChanged();
+            }
+        }
         public string Salt
         {
             get => Hasher.Salt;
@@ -159,6 +169,8 @@ namespace MD4_app.ViewModels
         public void SetFileHasher(string filename)
         {
             Hasher = new FileMD4(filename, Salt);
+            Hasher.ProgressChangedHandler = (p) => Progress = p;
+            
             OnPropertyChanged("Input");
             OnPropertyChanged("IsFileHasher");
             OnPropertyChanged("InputHorAligment");
@@ -174,6 +186,8 @@ namespace MD4_app.ViewModels
         public void SetStringHasher()
         {
             Hasher = new MD4(null, Salt);
+            Hasher.ProgressChangedHandler = (p) => Progress = p;
+
             OnPropertyChanged("Input");
             OnPropertyChanged("IsFileHasher");
             OnPropertyChanged("InputHorAligment");

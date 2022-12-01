@@ -198,17 +198,32 @@
     </GroupBox>
 
     <!--  Row 5, Полоса прогресса -->
-    <ProgressBar Grid.Row="5" Height="18" Background="#FFF0F0F0" BorderThickness="0" Margin="-5,0" VerticalAlignment="Top">
+    <ProgressBar Grid.Row="5" Height="18" Background="#FFF0F0F0" BorderThickness="0" Margin="-5,0" VerticalAlignment="Top" Value="{Binding Progress.Progress, Mode=OneWay}">
       <ProgressBar.Style>
         <Style TargetType="ProgressBar">
           <Setter Property="IsIndeterminate" Value="False"/>
           <Style.Triggers>
-            <DataTrigger Binding="{Binding IsEnabled}" Value="False">
-              <Setter Property="IsIndeterminate" Value="True" />
+            <DataTrigger Binding="{Binding Progress.Status}" Value="1">
+              <Setter Property="IsIndeterminate" Value="True"/>
             </DataTrigger>
           </Style.Triggers>
         </Style>
       </ProgressBar.Style>
     </ProgressBar>
+    <Label Grid.Row="5" Height="18" Padding="0" HorizontalAlignment="Center">
+      <Label.Style>
+        <Style TargetType="Label">
+          <Setter Property="Content" Value=""/>
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding Progress.Status}" Value="1">
+              <Setter Property="Content" Value="Инициализация..."/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Progress.Status}" Value="2">
+              <Setter Property="Content" Value="{Binding Progress, Mode=OneWay}"/>
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </Label.Style>
+    </Label>
   </Grid>
 </Window>
