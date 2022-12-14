@@ -1,0 +1,2 @@
+# Убрать предупрежедения о переносимости
+dotnet_diagnostic.ca14161.severity = silient

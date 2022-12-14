@@ -17,7 +17,7 @@ namespace MD4_app.ViewModels
 
     internal class HashGeneratorViewModel : BaseViewModel
     {
-        public MD4 Hasher = new();
+        public IHasher Hasher = new MD4();
 
         private string? compareHash;
         private string? compareValue;
@@ -26,7 +26,17 @@ namespace MD4_app.ViewModels
         private bool isEnabled = true;
         private bool isPasswordRequired = false;
         private string saltValidationError = "";
-
+        private HashingProgress progress = new HashingProgress(HashingStatus.Done);
+        
+        public HashingProgress Progress
+        {
+            get => progress;
+            set
+            {
+                progress = value;
+                OnPropertyChanged();
+            }
+        }
         public string Salt
         {
             get => Hasher.Salt;
@@ -35,6 +45,7 @@ namespace MD4_app.ViewModels
                 Hasher.Salt = value;
                 OnPropertyChanged();
                 OnPropertyChanged("HexHash");
+                OnPropertyChanged("BytesHash");
             }
         }
         public string? Input
@@ -45,6 +56,7 @@ namespace MD4_app.ViewModels
                 Hasher.Value = value;
                 OnPropertyChanged();
                 OnPropertyChanged("HexHash");
+                OnPropertyChanged("BytesHash");
             }
         }
         public string HexHash
@@ -139,6 +151,8 @@ namespace MD4_app.ViewModels
             }
         }
 
+        public string BytesHash => Hasher.BytesHash is null ? "" : string.Join(" ", Hasher.BytesHash);
+
         public string? CompareResultString => compareResult switch
         {
             HashCompareResult.Equal => "хеши совпадают",
@@ -159,7 +173,10 @@ namespace MD4_app.ViewModels
         public void SetFileHasher(string filename)
         {
             Hasher = new FileMD4(filename, Salt);
+            Hasher.ProgressChangedHandler = (p) => Progress = p;
+            
             OnPropertyChanged("Input");
+            OnPropertyChanged("BytesHash");
             OnPropertyChanged("IsFileHasher");
             OnPropertyChanged("InputHorAligment");
             OnPropertyChanged("InputVerAligment");
@@ -174,7 +191,10 @@ namespace MD4_app.ViewModels
         public void SetStringHasher()
         {
             Hasher = new MD4(null, Salt);
+            Hasher.ProgressChangedHandler = (p) => Progress = p;
+
             OnPropertyChanged("Input");
+            OnPropertyChanged("BytesHash");
             OnPropertyChanged("IsFileHasher");
             OnPropertyChanged("InputHorAligment");
             OnPropertyChanged("InputVerAligment");
@@ -190,6 +210,7 @@ namespace MD4_app.ViewModels
         {
             Hasher.Calculate();
             OnPropertyChanged("HexHash");
+            OnPropertyChanged("BytesHash");
             OnPropertyChanged("HashBytesString");
             OnPropertyChanged("ComparisionVisibility");
         }

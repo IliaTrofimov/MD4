@@ -29,7 +29,9 @@
       <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,0,5,0" Padding="0" FontWeight="Bold" Text="Сборка:"/>
 
       <TextBlock Grid.Row="1" Grid.Column="1" Margin="0,0,0,0" Padding="0" Text="Трофимов Илья Сергеевич, группа А-05-19"/>
-      <TextBlock Grid.Row="2" Grid.Column="1" Margin="0,0,0,0" Padding="0" Text="{Binding BuildVersion}"/>
+      <TextBlock Grid.Row="2" Grid.Column="1" Margin="0,0,0,0" Padding="0">
+        <TextBlock Text="{Binding BuildVersion}"/> от <TextBlock Text="{Binding BuildDate}"/>
+      </TextBlock>
 
       <Image Grid.RowSpan="3" Grid.Column="2" Source="/Resources/main_icon.ico"/>
     </Grid>

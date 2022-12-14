@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         Title="MD4" 
         Height="400" Width="800" MinHeight="400" MinWidth="425" 
-        Closing="Window_Closing" Background="White" UseLayoutRounding="True">
+        Background="White" UseLayoutRounding="True">
   <Grid Margin="5,0">
     <Grid.RowDefinitions>
       <RowDefinition Height="auto"/>
@@ -184,9 +184,26 @@
     <GroupBox Grid.Row="4" Margin="0,0,0,5" Padding="2" MinHeight="100"  Header="Результаты" BorderBrush="#FFB4B4B4" Background="White" UseLayoutRounding="True">
       <StackPanel>
         <Label Grid.Row="0" Content="Вычисленный хеш:" Padding="0" Foreground="Gray"/>
-        <TextBox Grid.Row="1" Text="{Binding HexHash}" Margin="0,0,0,5" IsReadOnly="True" FontWeight="Bold" BorderThickness="0" Padding="0" VerticalAlignment="Top"  FontFamily="Consolas" UseLayoutRounding="False"/>
+        <TextBox Grid.Row="1" Text="{Binding HexHash}" Margin="0,0,0,5" IsReadOnly="True" FontWeight="Bold" BorderThickness="0" Padding="0" VerticalAlignment="Top"  FontFamily="Consolas" UseLayoutRounding="False">
+          <TextBox.ToolTip>
+            <ToolTip Padding="2,0">
+              <TextBlock Padding="0" Margin="0">
+                Байты: <TextBlock FontFamily="Consolas" Text="{Binding BytesHash}"/>
+              </TextBlock>
+              <ToolTip.Style>
+                <Style TargetType="ToolTip">
+                  <Setter Property="Visibility" Value="Visible"/>
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding BytesHash.Length}" Value="0">
+                      <Setter Property="Visibility" Value="Collapsed"/>
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </ToolTip.Style>
+            </ToolTip>
+          </TextBox.ToolTip>
+        </TextBox>
         <StackPanel Visibility="{Binding ComparisionVisibility}">
-
           <Separator/>
           <Label Content="{Binding CompareResultString}" Margin="190,0,0,-18" Padding="0,0,0,0" Foreground="{Binding CompareResultStringColor}"/>
           <Label Content="Сравнение с известным файлом:" Padding="0,0,0,0" Foreground="Gray"/>
@@ -198,17 +215,33 @@
     </GroupBox>
 
     <!--  Row 5, Полоса прогресса -->
-    <ProgressBar Grid.Row="5" Height="18" Background="#FFF0F0F0" BorderThickness="0" Margin="-5,0" VerticalAlignment="Top">
+    <ProgressBar Grid.Row="5" Height="18" Background="#FFF0F0F0" BorderThickness="0" Margin="-5,0" VerticalAlignment="Top" Value="{Binding Progress.Progress, Mode=OneWay}">
       <ProgressBar.Style>
         <Style TargetType="ProgressBar">
           <Setter Property="IsIndeterminate" Value="False"/>
           <Style.Triggers>
-            <DataTrigger Binding="{Binding IsEnabled}" Value="False">
-              <Setter Property="IsIndeterminate" Value="True" />
+            <DataTrigger Binding="{Binding Progress.Status}" Value="1">
+              <Setter Property="IsIndeterminate" Value="True"/>
             </DataTrigger>
           </Style.Triggers>
         </Style>
       </ProgressBar.Style>
     </ProgressBar>
+    <Label Grid.Row="5" Height="18" Padding="0" HorizontalAlignment="Center">
+      <Label.Style>
+        <Style TargetType="Label">
+          <Setter Property="Content" Value=""/>
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding Progress.Status}" Value="1">
+              <Setter Property="Content" Value="Инициализация..."/>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Progress.Status}" Value="2">
+              <Setter Property="Content" Value="{Binding Progress, Mode=OneWay}"/>
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </Label.Style>
+    </Label>
   </Grid>
 </Window>
+

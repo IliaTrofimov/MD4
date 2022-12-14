@@ -30,7 +30,7 @@ namespace MD4_app.Utility
             return data.ToUpper();
         }
 
-        public static void WriteHashFile(MD4_hash.MD4 hasher, string filename)
+        public static void WriteHashFile(MD4_hash.IHasher hasher, string filename)
         {
             File.WriteAllText(filename, hasher.HexHash);
         }

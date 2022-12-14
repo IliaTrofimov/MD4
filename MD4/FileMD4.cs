@@ -1,9 +1,20 @@
-﻿    namespace MD4_hash
+﻿using System.Text;
+
+namespace MD4_hash
 {
     /// <summary>Implements the MD4 message digest algorithm for hashing files</summary>
-    public class FileMD4 : MD4
+    public class FileMD4 : MD4Base, IHasher
     {
-        public string? FileName
+        protected byte[]? lastHash = null;
+
+        protected string? value = null;
+
+        protected string salt = "";
+
+
+        public byte[]? BytesHash => lastHash;
+        public string HexHash => MD4Utility.ToHex(lastHash);
+        public string? Value
         {
             get => value;
             set
@@ -12,64 +23,99 @@
                 lastHash = null;
             }
         }
-
-
-        public FileMD4(string? filename = null, string salt = "") : base(filename, salt) { }
-
-
-        public override object Clone()
+        public string Salt
         {
-            FileMD4 clone = new FileMD4(value, salt);
-            clone.value = value is null ? null : (string)value.Clone();
-            clone.salt = (string)salt.Clone();
-            clone.lastHash = lastHash is null ? null : (byte[]?)lastHash.Clone();
-            return clone;
+            get => salt;
+            set
+            {
+                salt = value;
+                lastHash = null;
+            }
+        }
+        public Action<HashingProgress>? ProgressChangedHandler { get; set; }
+
+
+        public FileMD4(string? s = null, string salt = "")
+        {
+            EngineReset();
+            value = s;
+            this.salt = salt;
         }
 
-        /// <summary>Returns a byte hash from a file</summary>
-        override public byte[] GetByteHash(string filename)
+
+
+        public void Calculate()
+        {
+            GetByteHash(value is null ? "" : value);
+        }
+
+        public Task CalculateAsync(CancellationToken cancellationToken)
+        {
+            return GetByteHashAsync(value is null ? "" : value, cancellationToken);
+        }
+
+        public byte[] GetByteHash(string filename)
         {
             value = filename;
+            ProgressChangedHandler?.Invoke(new HashingProgress(HashingStatus.Initializing));
 
             using FileStream fs = new FileStream(filename, FileMode.Open);
             byte[] b = new byte[salt.Length + fs.Length];
+            if (!string.IsNullOrEmpty(salt)) 
+            {
+                byte[] s = Encoding.UTF8.GetBytes(salt);
+                Array.Copy(s, b, s.Length);
+            }
             fs.Read(b, salt.Length, (int)fs.Length);
-           
-            EngineReset();
-            EngineUpdate(b, 0, b.Length);
-            return lastHash = EngineDigest();
-        }
 
-        /// <summary>Returns a byte hash from a file</summary>
-        public async Task<byte[]> GetByteHashAsync(string filename, CancellationToken cancellationToken)
-        {
-            value = filename;
-            byte[] b = await File.ReadAllBytesAsync(value, cancellationToken);
             EngineReset();
             EngineUpdate(b, 0, b.Length);
             lastHash = EngineDigest();
-            return lastHash = EngineDigest();
+            ProgressChangedHandler?.Invoke(new HashingProgress(HashingStatus.Done));
+            return lastHash;
         }
 
-        /// <summary>Returns a hexidecimal hash from a file</summary>
-        public async Task<string> GetHexHashAsync(string filename, CancellationToken cancellationToken)
+        public async Task<byte[]?> GetByteHashAsync(string filename, CancellationToken cancellationToken)
         {
             value = filename;
-            byte[] b = await File.ReadAllBytesAsync(value, cancellationToken);
-            EngineReset();
-            EngineUpdate(b, 0, b.Length);
-            lastHash = EngineDigest();
-            return MD4Utility.ToHex(lastHash);
+            ProgressChangedHandler?.Invoke(new HashingProgress(HashingStatus.Initializing));
+
+            try
+            {
+                byte[] file = await File.ReadAllBytesAsync(value, cancellationToken);
+                byte[] b = new byte[file.Length + salt.Length];
+                if (!string.IsNullOrEmpty(salt))
+                {
+                    byte[] s = Encoding.UTF8.GetBytes(salt);
+                    Array.Copy(s, b, s.Length);
+                }
+                Array.Copy(file, b, file.Length);
+
+                EngineReset();
+                EngineUpdate(b, 0, b.Length);
+                lastHash = EngineDigest();
+                return lastHash = EngineDigest();
+            }
+            catch (OperationCanceledException)
+            {
+                ProgressChangedHandler?.Invoke(new HashingProgress(HashingStatus.Cancelled));
+                EngineReset();
+                return lastHash = null;
+            }
+            
+        }
+        
+        public string GetHexHash(string filename, bool upperCase = true)
+        {
+            GetByteHash(filename);
+            return MD4Utility.ToHex(lastHash, upperCase);
         }
 
-        public override async Task CalculateAsync(CancellationToken cancellationToken)
-        {
-            if (value == null)
-                throw new Exception("Необходимо указать имя файла перед вызововм метода FileMD4.CalculateAsync()");
 
-            byte[] b = await File.ReadAllBytesAsync(value, cancellationToken);
-            EngineReset();
-            EngineUpdate(b, 0, b.Length);
+        protected override void SetProgress(long processed, long total)
+        {
+            ProgressChangedHandler?.Invoke(new HashingProgress(processed, total, HashingStatus.Processing));
         }
     }
 }
+
