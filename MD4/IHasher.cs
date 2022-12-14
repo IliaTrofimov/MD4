@@ -39,5 +39,28 @@ namespace MD4_hash
         /// <summary> Returns a string that contains the hexadecimal hash </summary>
         public string GetHexHash(string s, bool upperCase = false);
 
+
+        /// <summary>
+        /// Calculates hashes with data set in hasherA and hasherB and compares results.
+        /// </summary>
+        /// <param name="hasherA">Hahser instance. hasherA.Value must be set before calling this method!</param>
+        /// <param name="hasherB">Hahser instance. hasherA.Value must be set before calling this method!</param>
+        /// <returns>True if hasherA.BytesHash equals to hasherB.BytesHash, false otherwise</returns>
+        public static bool CompareHashes(IHasher hasherA, IHasher hasherB)
+        {
+            hasherA.Calculate();
+            hasherB.Calculate();
+            byte[]? hashABytes = hasherA.BytesHash;
+            byte[]? hashBBytes = hasherB.BytesHash;
+            
+            if (hashABytes is null || hashBBytes is null || hashABytes.Length != hashBBytes.Length)
+                return false;
+
+            for (int i = 0; i < hashABytes.Length && i < hashBBytes.Length; i++)
+                if (hashABytes[i] != hashBBytes[i]) return false;
+
+            return true;
+        } 
+
     }
 }

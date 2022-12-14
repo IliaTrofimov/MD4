@@ -2,27 +2,28 @@
 	
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-		<PublishSingleFile>true</PublishSingleFile>
 		<TrimMode>link</TrimMode>
-		<ApplicationIcon>Resources\main_icon.ico</ApplicationIcon>
-		<SignAssembly>False</SignAssembly>
 		<RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
 		<Deterministic>False</Deterministic>
-		<PackageIcon>main_icon.ico</PackageIcon>
-		<AssemblyVersion></AssemblyVersion>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		
 		<DebugType>embedded</DebugType>
-		<EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
 		<AnalysisLevel>latest</AnalysisLevel>
 		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
+
+		<PackageIcon>main_icon.ico</PackageIcon>
+		<ApplicationIcon>Resources\main_icon.ico</ApplicationIcon>
+		
 		<Description>Утилита для вычисления контрольных сумм по алгоритму MD4 </Description>
 		<Product>MD4 app</Product>
 		<Company>MPEI</Company>
 		<Authors>Илья Трофимов</Authors>
-		<StartupObject></StartupObject>
+		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+		<WriteAdditionalProbingPathsToMainConfig>true</WriteAdditionalProbingPathsToMainConfig>
+		<GenerateRuntimeConfigDevFile>false</GenerateRuntimeConfigDevFile>
   </PropertyGroup>
 	
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -43,6 +44,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Fody" Version="6.6.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Analyzers" Version="4.2.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -93,8 +98,11 @@
     </Page>
   </ItemGroup>
 
+	<!--
 	<Target AfterTargets="AfterBuild;NonWinFodyTarget" Name="CleanReferenceCopyLocalPaths">
      <Delete Files="@(ReferenceCopyLocalPaths->'$(OutDir)%(DestinationSubDirectory)%(Filename)%(Extension)')" />
   </Target>
+	-->
+
 
 </Project>

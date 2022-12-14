@@ -45,6 +45,7 @@ namespace MD4_app.ViewModels
                 Hasher.Salt = value;
                 OnPropertyChanged();
                 OnPropertyChanged("HexHash");
+                OnPropertyChanged("BytesHash");
             }
         }
         public string? Input
@@ -55,6 +56,7 @@ namespace MD4_app.ViewModels
                 Hasher.Value = value;
                 OnPropertyChanged();
                 OnPropertyChanged("HexHash");
+                OnPropertyChanged("BytesHash");
             }
         }
         public string HexHash
@@ -149,6 +151,8 @@ namespace MD4_app.ViewModels
             }
         }
 
+        public string BytesHash => Hasher.BytesHash is null ? "" : string.Join(" ", Hasher.BytesHash);
+
         public string? CompareResultString => compareResult switch
         {
             HashCompareResult.Equal => "хеши совпадают",
@@ -172,6 +176,7 @@ namespace MD4_app.ViewModels
             Hasher.ProgressChangedHandler = (p) => Progress = p;
             
             OnPropertyChanged("Input");
+            OnPropertyChanged("BytesHash");
             OnPropertyChanged("IsFileHasher");
             OnPropertyChanged("InputHorAligment");
             OnPropertyChanged("InputVerAligment");
@@ -189,6 +194,7 @@ namespace MD4_app.ViewModels
             Hasher.ProgressChangedHandler = (p) => Progress = p;
 
             OnPropertyChanged("Input");
+            OnPropertyChanged("BytesHash");
             OnPropertyChanged("IsFileHasher");
             OnPropertyChanged("InputHorAligment");
             OnPropertyChanged("InputVerAligment");
@@ -204,6 +210,7 @@ namespace MD4_app.ViewModels
         {
             Hasher.Calculate();
             OnPropertyChanged("HexHash");
+            OnPropertyChanged("BytesHash");
             OnPropertyChanged("HashBytesString");
             OnPropertyChanged("ComparisionVisibility");
         }

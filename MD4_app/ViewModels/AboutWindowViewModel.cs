@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace MD4_app.ViewModels
 {
@@ -14,10 +15,19 @@ namespace MD4_app.ViewModels
 
         public AboutWindowViewModel()
         {
-            Assembly assembly = Assembly.GetEntryAssembly();
-            System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location);
-            BuildVersion = fvi.FileVersion;
-            BuildDate = System.IO.File.GetCreationTime(Assembly.GetEntryAssembly().Location).ToString("dd.MM.yyyy");
+            if (System.Diagnostics.Process.GetCurrentProcess().MainModule is not null)
+            {
+                try
+                {
+                    var exe = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+                    BuildVersion = System.Diagnostics.FileVersionInfo.GetVersionInfo(exe).ProductVersion;
+                    BuildDate = new FileInfo(exe).CreationTime.ToString("dd.MM.yyyy");
+                }
+                catch
+                {
+                }
+                
+            }
         }
     }
 }

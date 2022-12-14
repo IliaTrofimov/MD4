@@ -72,7 +72,6 @@ namespace MD4_app
             if (!CheckPassword())
                 return;
                
-
             ViewModel.IsEnabled = false;
             runCancellationTokenSource = new CancellationTokenSource();
 
@@ -240,18 +239,6 @@ namespace MD4_app
             ViewModel.CompareResult = HashCompareResult.None;
         }
 
-        private void CompareHash_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            ViewModel.CompareResult = HashCompareResult.None;
-
-            if (e.Text.Any(ch => !(char.IsDigit(ch) || char.ToLower(ch) >= 'a' && char.ToLower(ch) <= 'f')))
-            {
-                e.Handled = true;
-                System.Media.SystemSounds.Exclamation.Play();
-                ViewModel.CompareResult = HashCompareResult.WrongSymbol;
-            }
-        }
-
         private void Clear_Comparision(object sender, RoutedEventArgs e)
         {
             ViewModel.CompareHashHex = null;
@@ -275,21 +262,12 @@ namespace MD4_app
         }
 
 
-
         // Closing
         // -------------------------------------------------------------------
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        protected override void OnClosed(EventArgs e)
         {
-            if (runCancellationTokenSource != null && !runCancellationTokenSource.IsCancellationRequested)
-                runCancellationTokenSource.Cancel();
-
-            Properties.Settings.Default.IsPasswordRequired = ViewModel.IsPasswordRequired;
-            Properties.Settings.Default.Save();
-        }
-
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
+            base.OnClosed(e);
+            Application.Current.Dispatcher.InvokeShutdown();
         }
     }
 }
