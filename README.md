@@ -1,5 +1,5 @@
 # MD4 
-MD4 hashing algorythm implementation and GUI app for hashing files and text
+MD4 hashing algorythm implementation and GUI app for hashing files and text. Was made by me as university project.
 
 ## MD4 project
 Is a C# library with several implementations of MD4 algorythm.
