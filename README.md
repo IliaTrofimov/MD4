@@ -9,7 +9,9 @@ Is a C# library with several implementations of MD4 algorythm.
 
 
 ## MD4_app project
-Is WPF-based app for hashing files and plane text and comparing hashes.
+Is WPF-based app for hashing files and plane text and comparing hashes. Currently interface is on russian.
+<img width="832" alt="Снимок экрана 2023-01-23 в 10 34 15" src="https://user-images.githubusercontent.com/39233120/213986856-83c9deae-2b45-4fed-bae2-0a814495fc28.png">
+
 
 
 ### *ToDo*
